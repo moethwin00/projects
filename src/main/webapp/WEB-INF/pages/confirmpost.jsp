@@ -10,6 +10,15 @@
 	<h5 class="h5 mb-3">Create Post Confirmation</h5>
 	<%-- <form method="post" action="savePost"> --%>
 				<div class="row mb-3">
+					<div class="col-md-6">
+						<c:if test="${errorMsg != null }">
+							<div class="alert alert-danger alert-dismissible fade show" role="alert">
+								<i class="far fa-times-circle close" data-dismiss="alert" aria-label="Close"></i> <strong>${errorMsg }</strong>
+							</div>
+						</c:if>
+					</div>
+				</div>
+				<div class="row mb-3">
 					<div class="col-md-2"><label><span class="align-middle">Title</span></label></div>
 					<div class="col-md-4"><p>${post.title}</p></div>
 				</div>
@@ -18,7 +27,7 @@
 					<div class="col-md-4"><p>${post.description}</p></div>
 				</div>
 				<div class="row">
-					<div class="col-md-2 text-right"><a href="savePost/${post.title}/${post.description}" class="btn btn-primary">Create</a></div>
+					<div class="col-md-2 text-right"><a href="savePost/<c:if test='${errorMsg == null }'>${post.id}/${post.title}/${post.description}</c:if><c:if test='${errorMsg != null }'>${post.id}/${title}/${description}</c:if>" class="btn btn-primary">Create</a></div>
 					<div class="col-md-4 text-left"><a href="createpost" class="btn btn-outline-success">Cancel</a></div>
 				</div>
 			<%-- </form> --%>

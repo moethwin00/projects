@@ -39,6 +39,18 @@ public class PostServiceImpl implements PostService {
 	public void addPost(Post post) {
 		postDAO.addPost(post);
 	}
+
+	public Post getPostsByTitle(String title) {
+		return postDAO.getPostsByTitle(title);
+	}
+
+	public Post updatePost(Post post) {
+		return postDAO.updatePost(post);
+	}
+
+	public Post getPostById(int postId) {
+		return postDAO.getPostById(postId);
+	}
 	
 
 }

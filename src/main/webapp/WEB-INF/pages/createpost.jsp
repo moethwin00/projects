@@ -7,7 +7,7 @@
 <jsp:include page="layout/header.jsp"></jsp:include>
 <jsp:include page="layout/menu.jsp"></jsp:include>
 <div class = "container post-container">
-	<h5 class="h5 mb-3">Create Post</h5>
+	<h5 class="h5 mb-3">${pageTitle}</h5>
 	<form:form method="post" action="confirmpost" modelAttribute="postForm">
 				<%-- <div class="row mb-3">
 					<div class="col-md-7">
@@ -28,6 +28,11 @@
 					<div class="col-md-2"><label><span class="align-middle">Description</span></label></div>
 					<div class="col-md-4"><form:textarea path="description" class="form-control"></form:textarea></div>
 					<div class="col-md-6"><small><form:errors class="text-danger" path="description"/></small></div>
+				</div>
+				<div class="row mb-3">
+					<div class="col-md-2"><label><span class="align-middle">Status</span></label></div>
+					<div class="col-md-4"><form:checkbox data-toggle="toggle" checked="false" data-size="small" data-onstyle="success" path="active" data-offstyle="danger" /></div>
+					<div class="col-md-6"><small><form:errors class="text-danger" path="active"/></small></div>
 				</div>
 				<div class="row">
 					<div class="col-md-6 text-right"><input type="submit" class="btn btn-primary" value="Confirm"></div>

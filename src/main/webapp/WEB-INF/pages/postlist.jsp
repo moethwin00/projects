@@ -36,8 +36,8 @@
 						<td>${post.description}</td>
 						<td>${post.user.name}</td>
 						<td>${post.createdAt}</td>
-						<td><a href="editPost/${post.id}">Edit</a></td>
-						<td><a href="deletePost/${post.id}">Delete</a></td>
+						<td><a href="editPost?id=${post.id}">Edit</a></td>
+						<td><a href="deletePost?id=${post.id}">Delete</a></td>
 					</tr>
 					</c:forEach>
 				</tbody>

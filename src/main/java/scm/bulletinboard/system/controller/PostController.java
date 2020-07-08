@@ -33,18 +33,18 @@ import scm.bulletinboard.system.service.UserService;
 
 @Controller
 public class PostController {
-	
+
 	public static final Integer INITIAL_OFFSET = 0;
-	
+
 	@Autowired
 	PostService postService;
-	
+
 	@Autowired
 	UserService userService;
-	
+
 	@Autowired
 	MessageSource messageSource;
-	
+
 	@RequestMapping(value = "postlist", method = RequestMethod.GET)
 	public ModelAndView showPosts(ModelAndView model) {
 //		System.out.println(request.getParameter("q"));
@@ -53,29 +53,28 @@ public class PostController {
 		int postCount;
 		postList = postService.getAllPosts();
 		postCount = postService.getPostCount();
-		int paginationCount = postCount/7;
+		int paginationCount = postCount / 7;
 		model.addObject("postLists", postList);
 		model.addObject("postSearch", postForm);
 		model.addObject("paginationCount", paginationCount);
 		model.addObject("postCount", postCount);
 		model.setViewName("postlist");
-		return model;	
+		return model;
 	}
-	
+
 	@RequestMapping(value = "postlist/{pageId}", method = RequestMethod.GET)
 	public ModelAndView showPosts(@PathVariable int pageId, ModelAndView model) {
 		PostForm postForm = new PostForm();
 		int total = 7;
-		if(pageId == 1) {
-			
-		}
-		else {
+		if (pageId == 1) {
+
+		} else {
 			pageId = (pageId - 1) * total + 1;
 		}
 
 		List<Post> postList = postService.getPostsByPageId(pageId, total);
 		int postCount = postService.getPostCount();
-		int paginationCount = postCount/7;
+		int paginationCount = postCount / 7;
 		model.addObject("postSearch", postForm);
 		model.addObject("postLists", postList);
 		model.addObject("paginationCount", paginationCount);
@@ -84,103 +83,164 @@ public class PostController {
 		return model;
 	}
 
-	
-	 @RequestMapping(value = "postlist/searchPosts", method = {RequestMethod.POST})
-	    public ModelAndView searchPosts(@ModelAttribute("postSearch") PostForm postForm,
-	            HttpSession session) throws ParseException {
-	        ModelAndView searchPostView = new ModelAndView("postlist");
-	        doSearchProcess(searchPostView, INITIAL_OFFSET, true, postForm);
-	        
-	    	if(postForm.getTitle() == "") {
-	    		return new ModelAndView("redirect:/postlist/");
-	    	}
-	    	else {
-	    		 return searchPostView;
-	    	}
-//	        session.setAttribute("SEARCH_POST_FORM", postForm);
-	    }
-	    
-	    private void doSearchProcess(ModelAndView view, int offset, Boolean resultSearch,
-	    		PostForm postForm) throws ParseException {
-	    	String search = postForm.getTitle();
-	        int count = this.postService.getPostsBySearchkey(search).size();
-	        List<Post> postList = this.postService.getPostsBySearchkey(search);
-	        System.out.println(postList);
-	        if (resultSearch == false && postList.size() == 0) {
-	            view.addObject("alertMsg", "There is no search result.");
-	        }
-	        view.addObject("postSearch", new PostForm());
-	        view.addObject("offset", offset);
-	        view.addObject("postLists", postList);
-	        view.addObject("count", count);
-	    }
-	    
-	    @RequestMapping(value = "postlist/createpost")
-	    public ModelAndView createpost(ModelAndView model) {
-	    	PostCreateForm postCreateForm = new PostCreateForm();
-	    	model.addObject("postForm", postCreateForm);
-	    	model.setViewName("createpost");
-	    	return model;
-	    }
-	    
-	    
-	    @RequestMapping(value = "postlist/confirmpost", method = RequestMethod.POST)
-	    public ModelAndView savePost(@Validated @ModelAttribute(value = "postForm") PostCreateForm postCreateForm, BindingResult result, HttpSession httpSession, HttpServletRequest request, HttpServletResponse response) {
-	    	if(result.hasErrors()) {
-				ModelAndView model = new ModelAndView("createpost");
-				return model;
-			}
-	    	else {
-	    		Integer loginUserId = (Integer) request.getSession().getAttribute("loginUserId");
-	    		Date date = getDate();
-	    	    Post post = addNewPost(postCreateForm, loginUserId, date);
-	    	    ModelAndView model = new ModelAndView("confirmpost");
-	    	    model.addObject("post", post);
-	    	    return model;
-	    	}
-	    }
-	    
-	    
-	    private Date getDate() {
-	    	DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
-    	    Date date = new Date();
-    	    dateFormatter.format(date);
-			return date;
-		}
+	@RequestMapping(value = "postlist/searchPosts", method = { RequestMethod.POST })
+	public ModelAndView searchPosts(@ModelAttribute("postSearch") PostForm postForm, HttpSession session)
+	        throws ParseException {
+		ModelAndView searchPostView = new ModelAndView("postlist");
+		doSearchProcess(searchPostView, INITIAL_OFFSET, true, postForm);
 
-		private Post addNewPost(PostCreateForm postCreateForm, Integer loginUserId, Date date) {
-	    	Post post = new Post();
-	    	post.setTitle(postCreateForm.getTitle());
-			post.setDescription(postCreateForm.getDescription());
-			User user = userService.getUserById(loginUserId);
-			post.setUser(user);
-			post.setUpdatedUserId(loginUserId);
-			post.setCreatedAt(date);
-			post.setUpdatedAt(date);
-	    	return post;
+		if (postForm.getTitle() == "") {
+			return new ModelAndView("redirect:/postlist/");
+		} else {
+			return searchPostView;
 		}
-	    
-		@RequestMapping(value = "postlist/confirmpost", method = RequestMethod.GET)
-	    public ModelAndView confirmPost(@Validated @ModelAttribute(value = "post") Post post, HttpSession session) {
-			ModelAndView model = new ModelAndView();
+//	        session.setAttribute("SEARCH_POST_FORM", postForm);
+	}
+
+	private void doSearchProcess(ModelAndView view, int offset, Boolean resultSearch, PostForm postForm)
+	        throws ParseException {
+		String search = postForm.getTitle();
+		int count = this.postService.getPostsBySearchkey(search).size();
+		List<Post> postList = this.postService.getPostsBySearchkey(search);
+		System.out.println(postList);
+		if (resultSearch == false && postList.size() == 0) {
+			view.addObject("alertMsg", "There is no search result.");
+		}
+		view.addObject("postSearch", new PostForm());
+		view.addObject("offset", offset);
+		view.addObject("postLists", postList);
+		view.addObject("count", count);
+	}
+
+	@RequestMapping(value = "postlist/createpost", method = RequestMethod.GET)
+	public ModelAndView createpost(ModelAndView model) {
+		PostCreateForm postCreateForm = new PostCreateForm();
+		model.addObject("postForm", postCreateForm);
+		model.addObject("pageTitle", "Create Post");
+		model.setViewName("createpost");
+		return model;
+	}
+
+	@RequestMapping(value = "/postlist/confirmpost", method = RequestMethod.POST)
+	public ModelAndView savePost(@Validated @ModelAttribute(value = "postForm") PostCreateForm postCreateForm,
+	        BindingResult result, HttpSession httpSession, HttpServletRequest request, HttpServletResponse response) {
+		if (result.hasErrors()) {
+			ModelAndView model = new ModelAndView("createpost");
+			return model;
+		} else {
+			Integer loginUserId = (Integer) request.getSession().getAttribute("loginUserId");
+			Date date = getDate();
+			Post post = addNewPost(postCreateForm, loginUserId, date);
+			ModelAndView model = new ModelAndView("/confirmpost");
 			model.addObject("post", post);
-			model.setViewName("confirmpost");
 			return model;
 		}
+	}
+
+	private Date getDate() {
+		DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+		Date date = new Date();
+		dateFormatter.format(date);
+		return date;
+	}
+
+	private Post addNewPost(PostCreateForm postCreateForm, Integer loginUserId, Date date) {
+		Post post = new Post();
+		if(postCreateForm.getId() != null) {
+			post.setId(postCreateForm.getId());
+		}
+		post.setTitle(postCreateForm.getTitle());
+		post.setDescription(postCreateForm.getDescription());
+		User user = userService.getUserById(loginUserId);
+		post.setUser(user);
+		post.setUpdatedUserId(loginUserId);
+		if(postCreateForm.isActive()) {
+			post.setStatus(1);
+		}
+		else {
+			post.setStatus(0);
+		}
+		if(postCreateForm.getId() == null) {
+			post.setCreatedAt(date);
+			post.setUpdatedAt(date);
+		}
+		else {
+			post.setCreatedAt(postCreateForm.getCreatedAt());
+			post.setUpdatedAt(date);
+		}
 		
-		@RequestMapping(value = "postlist/savePost/{title}/{description}", method = RequestMethod.GET)
-	    public ModelAndView savePost(@PathVariable("title") String title, @PathVariable("description") String description, HttpSession session, HttpServletRequest request) {
-			PostCreateForm postCreateForm = new PostCreateForm();
-			postCreateForm.setTitle(title);
-			postCreateForm.setDescription(description);
-			Integer loginUserId = (Integer)request.getSession().getAttribute("loginUserId");
-    		Date date = getDate();
-    	    Post post = addNewPost(postCreateForm, loginUserId, date);
-    	    postService.addPost(post);
+		return post;
+	}
+
+	@RequestMapping(value = "/postlist/confirmpost", method = RequestMethod.GET)
+	public ModelAndView confirmPost(@Validated @ModelAttribute(value = "post") Post post, HttpServletRequest request,
+	        HttpSession session) {
+		ModelAndView model = new ModelAndView();
+		if (request.getParameter("errorMsg") != null) {
+			model.addObject("errorMsg", messageSource.getMessage("MSG_0002", null, null));
+			model.addObject("title", request.getParameter("title"));
+			model.addObject("description", request.getParameter("description"));
+		}
+		model.addObject("post", post);
+		model.setViewName("confirmpost");
+		return model;
+	}
+	
+	@RequestMapping(value = "postlist/editPost") 
+	public ModelAndView editPost(HttpServletRequest request) {
+		int postId = Integer.parseInt(request.getParameter("id"));
+		Post post = postService.getPostById(postId);
+		PostCreateForm postCreateForm = new PostCreateForm();
+		postCreateForm.setId(post.getId());
+		postCreateForm.setTitle(post.getTitle());
+		postCreateForm.setDescription(post.getDescription());
+		boolean active = (post.getStatus() == 1)?true:false;
+		postCreateForm.setActive(active);
+		ModelAndView model = new ModelAndView();
+		model.addObject("postForm", postCreateForm);
+		model.addObject("post", post);
+		model.addObject("pageTitle", "Update Post");
+		model.setViewName("createpost");
+		return model;
+	}
+
+	@RequestMapping(value = "postlist/savePost/{id}/{title}/{description}", method = RequestMethod.GET)
+	public ModelAndView savePost(@PathVariable("id") int id, @PathVariable("title") String title, @PathVariable("description") String description,
+	        HttpSession session, HttpServletRequest request) {
+		PostCreateForm postCreateForm = new PostCreateForm();
+		if(id != 0) {
+			postCreateForm.setId(id);
+		}
+		postCreateForm.setTitle(title);
+		postCreateForm.setDescription(description);
+		Integer loginUserId = (Integer) request.getSession().getAttribute("loginUserId");
+		Date date = getDate();
+		Post post = addNewPost(postCreateForm, loginUserId, date);
+		if(id == 0) {
+			Post postForCheck = postService.getPostsByTitle(title);
+			if (postForCheck != null) {
+				ModelAndView model = new ModelAndView();
+				model.addObject("errorMsg", messageSource.getMessage("MSG_0002", null, null));
+				System.out.println(post.getDescription());
+				model.setViewName("redirect:/postlist/confirmpost?id="+post.getId()+"&title="+post.getTitle()+"&description="+post.getDescription());
+				return model;
+			} else {
+				postService.addPost(post);
+				PostForm postForm = new PostForm();
+				ModelAndView model = new ModelAndView();
+				model.addObject("postSearch", postForm);
+				model.setViewName("redirect:/postlist/");
+				return model;
+			}
+		}
+		else {
+			postService.updatePost(post);
 			PostForm postForm = new PostForm();
 			ModelAndView model = new ModelAndView();
 			model.addObject("postSearch", postForm);
 			model.setViewName("redirect:/postlist/");
 			return model;
 		}
+		
+	}
 }

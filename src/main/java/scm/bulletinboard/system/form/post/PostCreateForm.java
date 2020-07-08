@@ -1,5 +1,7 @@
 package scm.bulletinboard.system.form.post;
 
+import java.util.Date;
+
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -12,9 +14,9 @@ public class PostCreateForm {
 	private User user;
 	private Integer updatedUserId;
 	private Integer deletedUserId;
-	private String createdAt;
-	private String updatedAt;
-	private String deletedAt;
+	private Date createdAt;
+	private Date updatedAt;
+	private Date deletedAt;
 	
 	@NotEmpty(message = "*Title is required")
 	@Size(max = 255, message = "*Title must be less than 255")
@@ -22,6 +24,8 @@ public class PostCreateForm {
 	
 	@NotEmpty(message = "*Description is required")
 	private String description;
+	
+	private boolean active;
 
 	public Integer getId() {
 		return id;
@@ -45,6 +49,15 @@ public class PostCreateForm {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	public int getStatus() {
@@ -79,27 +92,27 @@ public class PostCreateForm {
 		this.deletedUserId = deletedUserId;
 	}
 
-	public String getCreatedAt() {
+	public Date getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(String createdAt) {
+	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
 
-	public String getUpdatedAt() {
+	public Date getUpdatedAt() {
 		return updatedAt;
 	}
 
-	public void setUpdatedAt(String updatedAt) {
+	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
 	}
 
-	public String getDeletedAt() {
+	public Date getDeletedAt() {
 		return deletedAt;
 	}
 
-	public void setDeletedAt(String deletedAt) {
+	public void setDeletedAt(Date deletedAt) {
 		this.deletedAt = deletedAt;
 	}
 	

@@ -38,4 +38,8 @@ public class PostForm implements Serializable{
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 }
