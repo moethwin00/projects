@@ -1,5 +1,7 @@
 package scm.bulletinboard.system.dao.impl;
 
+import java.util.List;
+
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,7 @@ public class UserDAOImpl implements UserDAO {
 
 	public User getUserByEmail(String email) {
 		Query userHqlQuery = sessionFactory.getCurrentSession()
-		        .createQuery("Select u from User u where u.email = :email");
+		        .createQuery("from User as u where u.email = :email");
 		userHqlQuery.setParameter("email", email);
 		User resultUser = (User) userHqlQuery.uniqueResult();
 		return resultUser;
@@ -24,5 +26,25 @@ public class UserDAOImpl implements UserDAO {
 
 	public User getUserById(int id) {
 		return (User) sessionFactory.getCurrentSession().get(User.class, id);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<User> getAllUsers() {
+		Query query = sessionFactory.getCurrentSession().createQuery("from User as u where u.deletedUserId = "+null+" and u.deletedAt = "+null);
+		query.setFirstResult(0);
+		query.setMaxResults(7);
+		return query.list();
+	}
+
+	public int getUserCount() {
+		Query query = sessionFactory.getCurrentSession().createQuery("Select COUNT(u.id) from User as u where u.deletedUserId = "+null+" and u.deletedAt = "+null);
+		if (query.list().get(0) == null) {
+			return 1;
+		} else {
+			@SuppressWarnings("rawtypes")
+			List result = query.list();
+			int i = Integer.parseInt(result.get(0).toString());
+			return i;
+		}
 	}
 }

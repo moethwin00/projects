@@ -20,8 +20,7 @@ public class Post {
 	private String description;
 	private int status;
 	private User user;
-	private Integer createdUserId;
-	private Integer updatedUserId;
+	private User user2;
 	private Integer deletedUserId;
 	private Date createdAt;
 	private Date updatedAt;
@@ -43,6 +42,15 @@ public class Post {
 	}
 	public void setUser(User user) {
 		this.user = user;
+	}
+	
+	@ManyToOne
+	@JoinColumn(name = "updated_user_id", foreignKey = @ForeignKey(name="updated_user_id_FK"))
+	public User getUser2() {
+		return user2;
+	}
+	public void setUser2(User user2) {
+		this.user2 = user2;
 	}
 	@Column
 	public String getTitle() {
@@ -66,17 +74,6 @@ public class Post {
 	}
 	public void setStatus(int status) {
 		this.status = status;
-	}
-	
-	public void setCreatedUserId(Integer createdUserId) {
-		this.createdUserId = createdUserId;
-	}
-	@Column(name = "updated_user_id")
-	public Integer getUpdatedUserId() {
-		return updatedUserId;
-	}
-	public void setUpdatedUserId(Integer updatedUserId) {
-		this.updatedUserId = updatedUserId;
 	}
 	
 	@Column(name = "deleted_user_id")

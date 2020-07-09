@@ -51,6 +51,10 @@ public class PostServiceImpl implements PostService {
 	public Post getPostById(int postId) {
 		return postDAO.getPostById(postId);
 	}
+
+	public void softDelete(int id, int userId, Date deletedDate) {
+		postDAO.softDelete(id, userId, deletedDate);
+	}
 	
 
 }

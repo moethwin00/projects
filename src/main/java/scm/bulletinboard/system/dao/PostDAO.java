@@ -23,4 +23,6 @@ public interface PostDAO {
 
 	public Post getPostById(int postId);
 	
+	public void softDelete(int id, int userId, Date deletedDate);
+	
 }

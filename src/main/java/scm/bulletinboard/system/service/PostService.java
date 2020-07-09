@@ -22,5 +22,7 @@ public interface PostService {
 	public Post updatePost(Post post);
 	
 	public Post getPostById(int postId);
+	
+	public void softDelete(int id, int userId, Date deletedDate);
 
 }

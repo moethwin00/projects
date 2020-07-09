@@ -21,14 +21,14 @@ public class PostDAOImpl implements PostDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<Post> getAllPosts() {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Post");
+		Query query = sessionFactory.getCurrentSession().createQuery("from Post as p where p.deletedUserId = "+null+" and p.deletedAt = "+null);
 		query.setFirstResult(0);
 		query.setMaxResults(7);
 		return query.list();
 	}
 
 	public int getPostCount() {
-		Query query = sessionFactory.getCurrentSession().createQuery("Select COUNT(p.id) from Post as p");
+		Query query = sessionFactory.getCurrentSession().createQuery("Select COUNT(p.id) from Post as p where p.deletedUserId = "+null+" and p.deletedAt = "+null);
 		if (query.list().get(0) == null) {
 			return 1;
 		} else {
@@ -41,7 +41,7 @@ public class PostDAOImpl implements PostDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<Post> getPostsByPageId(int pageId, int total) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Post");
+		Query query = sessionFactory.getCurrentSession().createQuery("from Post as p where p.deletedUserId = "+null+" and p.deletedAt = "+null);
 		query.setFirstResult(pageId - 1);
 		query.setMaxResults(total);
 		return query.list();
@@ -67,6 +67,14 @@ public class PostDAOImpl implements PostDAO {
 	public Post updatePost(Post post) {
 		sessionFactory.getCurrentSession().update(post);
 		return post;
+	}
+	
+	public void softDelete(int id, int userId, Date deletedDate) {
+		Query query = sessionFactory.getCurrentSession().createQuery("update Post as p set p.deletedUserId = :userId, p.deletedAt = :deletedDate where p.id = :id");
+		query.setParameter("userId", userId);
+		query.setParameter("deletedDate", deletedDate);
+		query.setParameter("id", id);
+		query.executeUpdate();
 	}
 
 	public Post getPostById(int postId) {

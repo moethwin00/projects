@@ -20,11 +20,10 @@
 	<link rel="stylesheet" href="${mainStyle}">
 	<script src="${mainJs}"></script>
 	<script src="${mainJQuery}"></script>
-	<!-- <script type="text/javascript">
-		function search() {
-			var searchKey = document.getElementById("search-text").value;
-			document.location = searchKey;
+	 <script type="text/javascript">
+	 function deletePost(id) {
+			document.location = "deletePost?id="+id;
 		}
-	</script> -->
+	</script>
 </head>
 <body>

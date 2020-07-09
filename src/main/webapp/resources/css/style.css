@@ -32,6 +32,6 @@
 	display: inline-flex;
 }
 
-#chkbox-status {
-	
+.txt-post-date {
+    padding-top: 7px;
 }

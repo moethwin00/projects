@@ -128,8 +128,8 @@ public class User {
 		this.updatedUserId = updatedUserId;
 	}
 
-	@Column(nullable = true, name = "deleted_user_id")
-	public int getDeletedUserId() {
+	@Column(name = "deleted_user_id")
+	public Integer getDeletedUserId() {
 		return deletedUserId;
 	}
 
@@ -156,7 +156,7 @@ public class User {
 		this.updatedAt = updatedAt;
 	}
 
-	@Column(nullable = true, name = "deleted_at")
+	@Column(name = "deleted_at")
 	public String getDeletedAt() {
 		return deletedAt;
 	}
