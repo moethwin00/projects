@@ -132,7 +132,7 @@ public class PostController {
 	}
 
 	private Date getDate() {
-		DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+		DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 		Date date = new Date();
 		dateFormatter.format(date);
 		return date;
@@ -140,7 +140,7 @@ public class PostController {
 
 	private Post addNewPost(PostCreateForm postCreateForm, Integer loginUserId, Date date) {
 		Post post = new Post();
-		if(postCreateForm.getId() != null) {
+		if (postCreateForm.getId() != null) {
 			Post oldPost = postService.getPostById(postCreateForm.getId());
 			post.setId(postCreateForm.getId());
 			post.setCreatedAt(oldPost.getCreatedAt());
@@ -148,23 +148,25 @@ public class PostController {
 			post.setUser(oldUser);
 			User user = userService.getUserById(loginUserId);
 			post.setUser2(user);
+			if (!postCreateForm.isActive()) {
+				System.out.println(postCreateForm.isActive() + "********");
+				post.setStatus(0);
+			}
+			if (postCreateForm.isActive()) {
+				System.out.println(postCreateForm.isActive());
+				post.setStatus(1);
+			}
 			post.setUpdatedAt(date);
-		}
-		else {
+		} else {
 			post.setCreatedAt(date);
 			post.setUpdatedAt(date);
 			User user = userService.getUserById(loginUserId);
 			post.setUser(user);
 			post.setUser2(user);
+			post.setStatus(1);
 		}
 		post.setTitle(postCreateForm.getTitle());
 		post.setDescription(postCreateForm.getDescription());
-		if(postCreateForm.isActive()) {
-			post.setStatus(1);
-		}
-		else {
-			post.setStatus(0);
-		}
 		return post;
 	}
 
@@ -176,16 +178,18 @@ public class PostController {
 			model.addObject("errorMsg", messageSource.getMessage("MSG_0002", null, null));
 			model.addObject("title", request.getParameter("title"));
 			model.addObject("description", request.getParameter("description"));
+			model.addObject("active", request.getParameter("active"));
+			
 		}
-		
+
 		model.addObject("pageTitle", "Create Post Confirmation");
 		model.addObject("btnText", "Create");
 		model.addObject("post", post);
 		model.setViewName("confirmpost");
 		return model;
 	}
-	
-	@RequestMapping(value = "postlist/editPost") 
+
+	@RequestMapping(value = "postlist/editPost")
 	public ModelAndView editPost(HttpServletRequest request) {
 		int postId = Integer.parseInt(request.getParameter("id"));
 		Post post = postService.getPostById(postId);
@@ -193,7 +197,7 @@ public class PostController {
 		postCreateForm.setId(post.getId());
 		postCreateForm.setTitle(post.getTitle());
 		postCreateForm.setDescription(post.getDescription());
-		boolean active = (post.getStatus() == 1)?true:false;
+		boolean active = (post.getStatus() == 1) ? true : false;
 		postCreateForm.setActive(active);
 		ModelAndView model = new ModelAndView();
 		model.addObject("postForm", postCreateForm);
@@ -203,61 +207,60 @@ public class PostController {
 		return model;
 	}
 
-	@RequestMapping(value = "postlist/savePost/{id}/{title}/{description}", method = RequestMethod.GET)
-	public ModelAndView savePost(@PathVariable("id") int id, @PathVariable("title") String title, @PathVariable("description") String description,
+	@RequestMapping(value = "postlist/savePost/{id}/{title}/{description}/{status}", method = RequestMethod.GET)
+	public ModelAndView savePost(@PathVariable("id") int id, @PathVariable("title") String title,
+	        @PathVariable("description") String description, @PathVariable("status") int status,
 	        HttpSession session, HttpServletRequest request) {
 		PostCreateForm postCreateForm = new PostCreateForm();
-		if(id != 0) {
+		if (id != 0) {
 			postCreateForm.setId(id);
 		}
 		postCreateForm.setTitle(title);
 		postCreateForm.setDescription(description);
+		boolean active = (status==1)?true:false;
+		postCreateForm.setActive(active);
 		Integer loginUserId = (Integer) request.getSession().getAttribute("loginUserId");
 		Date date = getDate();
 		Post post = addNewPost(postCreateForm, loginUserId, date);
 		ModelAndView model = new ModelAndView();
-		if(id == 0) {
+		if (id == 0) {
 			Post postForCheck = postService.getPostsByTitle(title);
 			if (postForCheck != null) {
 				model = redirectErrorView(post);
-				
+
 			} else {
 				postService.addPost(post);
 				redirectPostList(model);
-			
+
 			}
-		}
-		else {
+		} else {
 			Post postForCheck = postService.getPostsByTitle(title);
 			if (postForCheck != null && postForCheck.getId() != post.getId()) {
-				if(postForCheck.getId() != post.getId()) {
+				if (postForCheck.getId() != post.getId()) {
 					model = redirectErrorView(post);
-				}
-				else {
+				} else {
 					postService.updatePost(post);
 					redirectPostList(model);
 				}
-				
-			} 
-			else {
+
+			} else {
 				postService.updatePost(post);
 				redirectPostList(model);
 			}
 		}
 		return model;
-		
+
 	}
 
 	@RequestMapping(value = "postlist/deletePost")
 	public ModelAndView softDelete(ModelAndView model, HttpServletRequest request, HttpSession session) {
-		int id = Integer.parseInt(request.getParameter("id"));
 		int userId = (Integer) request.getSession().getAttribute("loginUserId");
 		Date deletedDate = getDate();
 		postService.softDelete(Integer.parseInt(request.getParameter("id")), userId, deletedDate);
 		redirectPostList(model);
 		return model;
 	}
-	
+
 	private void redirectPostList(ModelAndView model) {
 		PostForm postForm = new PostForm();
 		model.addObject("postSearch", postForm);
@@ -267,8 +270,9 @@ public class PostController {
 	private ModelAndView redirectErrorView(Post post) {
 		ModelAndView model = new ModelAndView();
 		model.addObject("errorMsg", messageSource.getMessage("MSG_0002", null, null));
-		model.setViewName("redirect:/postlist/confirmpost?id="+post.getId()+"&title="+post.getTitle()+"&description="+post.getDescription());
+		model.setViewName("redirect:/postlist/confirmpost?id=" + post.getId() + "&title=" + post.getTitle()
+		        + "&description=" + post.getDescription());
 		return model;
 	}
-	
+
 }

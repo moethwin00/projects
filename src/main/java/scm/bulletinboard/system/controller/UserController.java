@@ -1,22 +1,25 @@
 package scm.bulletinboard.system.controller;
 
+import java.text.ParseException;
 import java.util.List;
-
+import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import scm.bulletinboard.system.form.user.UserCreateForm;
 import scm.bulletinboard.system.form.user.UserForm;
 import scm.bulletinboard.system.model.User;
 import scm.bulletinboard.system.service.UserService;
 
 @Controller
 public class UserController {
-	public static final Integer INITIAL_OFFSET = 0;
-
+	public static final Integer INITIAL_OFFSET01 = 0;
 
 	@Autowired
 	UserService userService;
@@ -24,7 +27,7 @@ public class UserController {
 	@Autowired
 	MessageSource messageSource;
 
-	@RequestMapping(value = "/userlist", method = RequestMethod.GET)
+	@RequestMapping(value = "userlist", method = RequestMethod.GET)
 	public ModelAndView showUsers(ModelAndView model) {
 //		System.out.println(request.getParameter("q"));
 		UserForm userForm = new UserForm();
@@ -41,64 +44,70 @@ public class UserController {
 		return model;
 	}
 
-//	@RequestMapping(value = "postlist/{pageId}", method = RequestMethod.GET)
-//	public ModelAndView showPosts(@PathVariable int pageId, ModelAndView model) {
-//		PostForm postForm = new PostForm();
-//		int total = 7;
-//		if (pageId == 1) {
+	@RequestMapping(value = "userlist/{pageId}", method = RequestMethod.GET)
+	public ModelAndView showUsers(@PathVariable int pageId, ModelAndView model) {
+		UserForm userForm = new UserForm();
+		int total = 7;
+		if (pageId == 1) {
+
+		} else {
+			pageId = (pageId - 1) * total + 1;
+		}
+
+		List<User> userList = userService.getUserByPageId(pageId, total);
+		int userCount = userService.getUserCount();
+		int paginationCount = userCount / 7;
+		model.addObject("userSearch", userForm);
+		model.addObject("userLists", userList);
+		model.addObject("paginationCount", paginationCount);
+		model.addObject("userCount", userCount);
+		model.setViewName("userlist");
+		return model;
+	}
+
+	@RequestMapping(value = "userlist/searchUsers", method = { RequestMethod.POST })
+	public ModelAndView searchUsers(@ModelAttribute("uerSearch") UserForm userForm, HttpSession session)
+	        throws ParseException {
+		ModelAndView searchUserView = new ModelAndView("userlist");
+		doSearchUserProcess(searchUserView, INITIAL_OFFSET01, true, userForm);
+
+		if (userForm.getName() == "" && userForm.getEmail() == "" && userForm.getCreatedFrom() == ""
+		        && userForm.getCreatedTo() == "") {
+			return new ModelAndView("redirect:/userlist/");
+		} else {
+			return searchUserView;
+		}
+//	        session.setAttribute("SEARCH_POST_FORM", postForm);
+	}
+
+	private void doSearchUserProcess(ModelAndView view, int offset, Boolean resultSearch, UserForm userForm)
+	        throws ParseException {
+		String searchName = userForm.getName();
+		String searchEmail = userForm.getEmail();
+		String searchCreatedFrom = userForm.getCreatedFrom().toString();
+		String searchCreatedTo = userForm.getCreatedTo().toString();
+		int count = this.userService.getUsersBySearchkeys(searchName, searchEmail, searchCreatedFrom, searchCreatedTo)
+		        .size();
+		List<User> userList = this.userService.getUsersBySearchkeys(searchName, searchEmail, searchCreatedFrom,
+		        searchCreatedTo);
+		System.out.println(userList);
+		if (resultSearch == false && userList.size() == 0) {
+			view.addObject("alertMsg", "There is no search result.");
+		}
+		view.addObject("userSearch", new UserForm());
+		view.addObject("offset", offset);
+		view.addObject("userLists", userList);
+		view.addObject("userCount", count);
+	}
 //
-//		} else {
-//			pageId = (pageId - 1) * total + 1;
-//		}
-//
-//		List<Post> postList = postService.getPostsByPageId(pageId, total);
-//		int postCount = postService.getPostCount();
-//		int paginationCount = postCount / 7;
-//		model.addObject("postSearch", postForm);
-//		model.addObject("postLists", postList);
-//		model.addObject("paginationCount", paginationCount);
-//		model.addObject("postCount", postCount);
-//		model.setViewName("postlist");
-//		return model;
-//	}
-//
-//	@RequestMapping(value = "postlist/searchPosts", method = { RequestMethod.POST })
-//	public ModelAndView searchPosts(@ModelAttribute("postSearch") PostForm postForm, HttpSession session)
-//	        throws ParseException {
-//		ModelAndView searchPostView = new ModelAndView("postlist");
-//		doSearchProcess(searchPostView, INITIAL_OFFSET, true, postForm);
-//
-//		if (postForm.getTitle() == "") {
-//			return new ModelAndView("redirect:/postlist/");
-//		} else {
-//			return searchPostView;
-//		}
-////	        session.setAttribute("SEARCH_POST_FORM", postForm);
-//	}
-//
-//	private void doSearchProcess(ModelAndView view, int offset, Boolean resultSearch, PostForm postForm)
-//	        throws ParseException {
-//		String search = postForm.getTitle();
-//		int count = this.postService.getPostsBySearchkey(search).size();
-//		List<Post> postList = this.postService.getPostsBySearchkey(search);
-//		System.out.println(postList);
-//		if (resultSearch == false && postList.size() == 0) {
-//			view.addObject("alertMsg", "There is no search result.");
-//		}
-//		view.addObject("postSearch", new PostForm());
-//		view.addObject("offset", offset);
-//		view.addObject("postLists", postList);
-//		view.addObject("count", count);
-//	}
-//
-//	@RequestMapping(value = "postlist/createpost", method = RequestMethod.GET)
-//	public ModelAndView createpost(ModelAndView model) {
-//		PostCreateForm postCreateForm = new PostCreateForm();
-//		model.addObject("postForm", postCreateForm);
-//		model.addObject("pageTitle", "Create Post");
-//		model.setViewName("createpost");
-//		return model;
-//	}
+	@RequestMapping(value = "userlist/createuser", method = RequestMethod.GET)
+	public ModelAndView createuser(ModelAndView model) {
+		UserCreateForm userCreateForm = new UserCreateForm();
+		model.addObject("userForm", userCreateForm);
+		model.addObject("pageTitle", "Create User");
+		model.setViewName("createuser");
+		return model;
+	}
 //
 //	@RequestMapping(value = "/postlist/confirmpost", method = RequestMethod.POST)
 //	public ModelAndView savePost(@Validated @ModelAttribute(value = "postForm") PostCreateForm postCreateForm,

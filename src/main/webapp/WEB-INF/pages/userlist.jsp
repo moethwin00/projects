@@ -6,7 +6,7 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <jsp:include page="layout/header.jsp"></jsp:include>
 <jsp:include page="layout/menu.jsp"></jsp:include>
-<form:form method="post" action="searchUsers" commandName="userSearch" id="movePage">
+<form:form method="post" action="searchUsers" modelAttribute="userSearch">
 	<div class = "container">
 		<h5 class="h5 mb-3">User List</h5>
 		<div class="container">
@@ -68,7 +68,7 @@
 				</div>
 			</c:forEach>
 			
-			<c:forEach var="user" items="${userLists}" varStatus="looop">
+			<c:forEach var="user" items="${userLists}" varStatus="loop">
 				<div class="modal fade" id="detailUser${user.id}" tabindex="-1" role="dialog" aria-labelledby="username" aria-hidden="true">
 				  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
 				    <div class="modal-content">

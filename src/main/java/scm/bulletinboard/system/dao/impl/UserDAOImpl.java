@@ -17,8 +17,7 @@ public class UserDAOImpl implements UserDAO {
 	SessionFactory sessionFactory;
 
 	public User getUserByEmail(String email) {
-		Query userHqlQuery = sessionFactory.getCurrentSession()
-		        .createQuery("from User as u where u.email = :email");
+		Query userHqlQuery = sessionFactory.getCurrentSession().createQuery("from User as u where u.email = :email");
 		userHqlQuery.setParameter("email", email);
 		User resultUser = (User) userHqlQuery.uniqueResult();
 		return resultUser;
@@ -30,14 +29,16 @@ public class UserDAOImpl implements UserDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<User> getAllUsers() {
-		Query query = sessionFactory.getCurrentSession().createQuery("from User as u where u.deletedUserId = "+null+" and u.deletedAt = "+null);
+		Query query = sessionFactory.getCurrentSession()
+		        .createQuery("from User as u where u.deletedUserId = " + null + " and u.deletedAt = " + null);
 		query.setFirstResult(0);
 		query.setMaxResults(7);
 		return query.list();
 	}
 
 	public int getUserCount() {
-		Query query = sessionFactory.getCurrentSession().createQuery("Select COUNT(u.id) from User as u where u.deletedUserId = "+null+" and u.deletedAt = "+null);
+		Query query = sessionFactory.getCurrentSession().createQuery(
+		        "Select COUNT(u.id) from User as u where u.deletedUserId = " + null + " and u.deletedAt = " + null);
 		if (query.list().get(0) == null) {
 			return 1;
 		} else {
@@ -46,5 +47,32 @@ public class UserDAOImpl implements UserDAO {
 			int i = Integer.parseInt(result.get(0).toString());
 			return i;
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<User> getPostsByPageId(int pageId, int total) {
+		Query query = sessionFactory.getCurrentSession()
+		        .createQuery("from User as u where u.deletedUserId = " + null + " and u.deletedAt = " + null);
+		query.setFirstResult(pageId - 1);
+		query.setMaxResults(total);
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<User> getUsersBySearchkeys(String searchName, String searchEmail, String searchCreatedFrom,
+	        String searchCreatedTo) {
+		String hql = "from User as u where u.name LIKE '%" + searchName + "%'";
+		if (searchEmail != "") {
+			hql += "and u.email LIKE '%" + searchEmail + "%'";
+		}
+		if (searchCreatedFrom != "" && searchCreatedTo == "") {
+			hql += "and u.createdAt >= " + searchCreatedFrom;
+		} else if (searchCreatedFrom == "" && searchCreatedTo != "") {
+			hql += "and u.createdAt <= " + searchCreatedTo;
+		} else if (searchCreatedFrom != "" && searchCreatedTo != "") {
+			hql += "and u.createdAt between " + searchCreatedFrom + " and " + searchCreatedTo;
+		}
+		Query query = sessionFactory.getCurrentSession().createQuery(hql);
+		return query.list();
 	}
 }

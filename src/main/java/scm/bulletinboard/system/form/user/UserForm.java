@@ -1,85 +1,64 @@
 package scm.bulletinboard.system.form.user;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class UserForm {
+public class UserForm implements Serializable {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -6035558741628182428L;
-	
-	private Integer id;
-	
-	private String name;
-	
-	private String email;
-	
-	private Date createdFrom;
-	
-	private Date createdTo;
+	private static final long serialVersionUID = 1L;
 
-	
+	private Integer id;
+
+	private String name;
+
+	private String email;
+
+	private String createdFrom;
+
+	private String createdTo;
 
 	public Integer getId() {
 		return id;
 	}
 
-
-
 	public void setId(Integer id) {
 		this.id = id;
 	}
-
-
 
 	public String getName() {
 		return name;
 	}
 
-
-
 	public void setName(String name) {
 		this.name = name;
 	}
-
-
 
 	public String getEmail() {
 		return email;
 	}
 
-
-
 	public void setEmail(String email) {
 		this.email = email;
 	}
 
-
-
-	public Date getCreatedFrom() {
+	public String getCreatedFrom() {
 		return createdFrom;
 	}
 
-
-
-	public void setCreatedFrom(Date createdFrom) {
+	public void setCreatedFrom(String createdFrom) {
 		this.createdFrom = createdFrom;
 	}
 
-
-
-	public Date getCreatedTo() {
+	public String getCreatedTo() {
 		return createdTo;
 	}
 
-
-
-	public void setCreatedTo(Date createdTo) {
+	public void setCreatedTo(String createdTo) {
 		this.createdTo = createdTo;
 	}
-
-
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;

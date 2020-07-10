@@ -42,7 +42,7 @@
 					</c:forEach>
 				</tbody>
 			</table>
-			<c:forEach var="post" items="${postLists}" varStatus="looop">
+			<c:forEach var="post" items="${postLists}" varStatus="loop">
 				<div class="modal fade" id="confirmModal${post.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 				  <div class="modal-dialog modal-dialog-centered" role="document">
 				    <div class="modal-content">

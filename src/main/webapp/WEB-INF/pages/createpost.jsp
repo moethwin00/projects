@@ -32,7 +32,7 @@
 				<c:if test="${pageTitle == 'Update Post'}">
 				<div class="row mb-3">
 					<div class="col-md-2"><label><span class="align-middle">Status</span></label></div>
-					<div class="col-md-4"><form:checkbox data-toggle="toggle" checked="false" data-size="small" data-onstyle="success" path="active" data-offstyle="danger" /></div>
+					<div class="col-md-4"><form:checkbox data-toggle="toggle" data-size="small" data-onstyle="success" path="active" data-offstyle="danger" /></div>
 					<div class="col-md-6"><small><form:errors class="text-danger" path="active"/></small></div>
 				</div>
 				</c:if>

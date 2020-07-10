@@ -1,5 +1,7 @@
 package scm.bulletinboard.system.form.post;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.validation.constraints.Max;

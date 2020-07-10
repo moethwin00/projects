@@ -9,13 +9,13 @@
 		    <c:if test="${LOGIN_USER != null}">
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 			    <li class="nav-item active">
-			      <a class="nav-link" href="../userlist">Users</a>
+			      <a class="nav-link" href="../userlist/">Users</a>
 			    </li>
 			    <li class="nav-item">
 			      <a class="nav-link" href="#">User</a>
 	   			</li>
 			    <li class="nav-item">
-			      <a class="nav-link" href="#">Posts</a>
+			      <a class="nav-link" href="../postlist/">Posts</a>
 			    </li>
 	   		</ul>
 		    <form class="form-inline my-2 my-lg-0">

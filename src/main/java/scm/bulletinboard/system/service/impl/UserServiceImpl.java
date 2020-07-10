@@ -1,7 +1,6 @@
 package scm.bulletinboard.system.service.impl;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +39,17 @@ public class UserServiceImpl implements UserService {
 
 	public int getUserCount() {
 		return userDAO.getUserCount();
+	}
+
+	public List<User> getUserByPageId(int pageId, int total) {
+		return userDAO.getPostsByPageId(pageId, total);
+	}
+	
+	@Transactional
+	public List<User> getUsersBySearchkeys(String searchName, String searchEmail, String searchCreatedFrom,
+	        String searchCreatedTo) {
+		return userDAO.getUsersBySearchkeys(searchName, searchEmail, searchCreatedFrom,
+		        searchCreatedTo);
 	}
 
 }
