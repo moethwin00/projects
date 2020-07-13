@@ -49,6 +49,7 @@ public class PostController {
 		postCount = postService.getPostCount();
 		int paginationCount = postCount / 7;
 		model.addObject("postLists", postList);
+		model.addObject("title", postForm.getTitle());
 		model.addObject("postSearch", postForm);
 		model.addObject("paginationCount", paginationCount);
 		model.addObject("postCount", postCount);
@@ -101,13 +102,17 @@ public class PostController {
 			view.addObject("alertMsg", "There is no search result.");
 		}
 		view.addObject("postSearch", new PostForm());
+		view.addObject("title", search);
 		view.addObject("offset", offset);
 		view.addObject("postLists", postList);
 		view.addObject("count", count);
 	}
 
 	@RequestMapping(value = "postlist/createpost", method = RequestMethod.GET)
-	public ModelAndView createpost(ModelAndView model) {
+	public ModelAndView createpost(ModelAndView model, HttpSession session) {
+		if(session.getAttribute("LOGIN_USER") == null) {
+			return new ModelAndView("redirect:/login");
+		}
 		PostCreateForm postCreateForm = new PostCreateForm();
 		model.addObject("postForm", postCreateForm);
 		model.addObject("pageTitle", "Create Post");
@@ -120,6 +125,12 @@ public class PostController {
 	        BindingResult result, HttpSession httpSession, HttpServletRequest request, HttpServletResponse response) {
 		if (result.hasErrors()) {
 			ModelAndView model = new ModelAndView("createpost");
+			if(postCreateForm.getId() == null) {
+				model.addObject("pageTitle", "Create Post");
+			}
+			else {
+				model.addObject("pageTitle", "Update Post");
+			}
 			return model;
 		} else {
 			Integer loginUserId = (Integer) request.getSession().getAttribute("loginUserId");

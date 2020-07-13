@@ -20,18 +20,18 @@
 				</div> --%>
 				<form:hidden path="id" />
 				<div class="row mb-3">
-					<div class="col-md-2"><label><span class="align-middle">Title</span></label></div>
+					<div class="col-md-2"><label><span>Title</span></label></div>
 					<div class="col-md-4"><form:input type="text" path="title" class="form-control" /></div>
 					<div class="col-md-6"><small><form:errors class="text-danger" path="title"/></small></div>
 				</div>
 				<div class="row mb-3">
-					<div class="col-md-2"><label><span class="align-middle">Description</span></label></div>
+					<div class="col-md-2"><label><span>Description</span></label></div>
 					<div class="col-md-4"><form:textarea path="description" class="form-control"></form:textarea></div>
 					<div class="col-md-6"><small><form:errors class="text-danger" path="description"/></small></div>
 				</div>
 				<c:if test="${pageTitle == 'Update Post'}">
 				<div class="row mb-3">
-					<div class="col-md-2"><label><span class="align-middle">Status</span></label></div>
+					<div class="col-md-2"><label><span>Status</span></label></div>
 					<div class="col-md-4"><form:checkbox data-toggle="toggle" data-size="small" data-onstyle="success" path="active" data-offstyle="danger" /></div>
 					<div class="col-md-6"><small><form:errors class="text-danger" path="active"/></small></div>
 				</div>

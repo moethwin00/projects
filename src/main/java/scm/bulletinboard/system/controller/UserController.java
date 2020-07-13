@@ -2,10 +2,15 @@ package scm.bulletinboard.system.controller;
 
 import java.text.ParseException;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,9 +32,11 @@ public class UserController {
 	@Autowired
 	MessageSource messageSource;
 
-	@RequestMapping(value = "userlist", method = RequestMethod.GET)
-	public ModelAndView showUsers(ModelAndView model) {
-//		System.out.println(request.getParameter("q"));
+	@RequestMapping(value = "/userlist", method = RequestMethod.GET)
+	public ModelAndView showUsers(ModelAndView model, HttpSession session) {
+		if(session.getAttribute("LOGIN_USER") == null) {
+			return new ModelAndView("redirect:/login");
+		}
 		UserForm userForm = new UserForm();
 		List<User> userList;
 		int userCount;
@@ -45,7 +52,10 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "userlist/{pageId}", method = RequestMethod.GET)
-	public ModelAndView showUsers(@PathVariable int pageId, ModelAndView model) {
+	public ModelAndView showUsers(@PathVariable int pageId, ModelAndView model, HttpSession session) {
+		if(session.getAttribute("LOGIN_USER") == null) {
+			return new ModelAndView("redirect:/login");
+		}
 		UserForm userForm = new UserForm();
 		int total = 7;
 		if (pageId == 1) {
@@ -68,6 +78,9 @@ public class UserController {
 	@RequestMapping(value = "userlist/searchUsers", method = { RequestMethod.POST })
 	public ModelAndView searchUsers(@ModelAttribute("uerSearch") UserForm userForm, HttpSession session)
 	        throws ParseException {
+		if(session.getAttribute("LOGIN_USER") == null) {
+			return new ModelAndView("redirect:/login");
+		}
 		ModelAndView searchUserView = new ModelAndView("userlist");
 		doSearchUserProcess(searchUserView, INITIAL_OFFSET01, true, userForm);
 
@@ -77,7 +90,6 @@ public class UserController {
 		} else {
 			return searchUserView;
 		}
-//	        session.setAttribute("SEARCH_POST_FORM", postForm);
 	}
 
 	private void doSearchUserProcess(ModelAndView view, int offset, Boolean resultSearch, UserForm userForm)
@@ -101,7 +113,10 @@ public class UserController {
 	}
 //
 	@RequestMapping(value = "userlist/createuser", method = RequestMethod.GET)
-	public ModelAndView createuser(ModelAndView model) {
+	public ModelAndView createuser(ModelAndView model, HttpSession session) {
+		if(session.getAttribute("LOGIN_USER") == null) {
+			return new ModelAndView("redirect:/login");
+		}
 		UserCreateForm userCreateForm = new UserCreateForm();
 		model.addObject("userForm", userCreateForm);
 		model.addObject("pageTitle", "Create User");
@@ -109,13 +124,20 @@ public class UserController {
 		return model;
 	}
 //
-//	@RequestMapping(value = "/postlist/confirmpost", method = RequestMethod.POST)
-//	public ModelAndView savePost(@Validated @ModelAttribute(value = "postForm") PostCreateForm postCreateForm,
-//	        BindingResult result, HttpSession httpSession, HttpServletRequest request, HttpServletResponse response) {
-//		if (result.hasErrors()) {
-//			ModelAndView model = new ModelAndView("createpost");
-//			return model;
-//		} else {
+	@RequestMapping(value = "/userlist/confirmuser", method = RequestMethod.POST)
+	public ModelAndView saveUser(@Validated @ModelAttribute(value = "userForm") UserCreateForm userCreateForm,
+	        BindingResult result, HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+		if(session.getAttribute("LOGIN_USER") == null) {
+			return new ModelAndView("redirect:/login");
+		}
+		if (result.hasErrors()) {
+			ModelAndView model = new ModelAndView("createuser");
+			return model;
+		}
+		return new ModelAndView();
+	}
+}
+//		else {
 //			Integer loginUserId = (Integer) request.getSession().getAttribute("loginUserId");
 //			Date date = getDate();
 //			Post post = addNewPost(postCreateForm, loginUserId, date);
@@ -123,7 +145,6 @@ public class UserController {
 //			model.addObject("post", post);
 //			return model;
 //		}
-//	}
 //
 //	private Date getDate() {
 //		DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
@@ -264,4 +285,3 @@ public class UserController {
 //		model.setViewName("redirect:/postlist/confirmpost?id="+post.getId()+"&title="+post.getTitle()+"&description="+post.getDescription());
 //		return model;
 //	}
-}
