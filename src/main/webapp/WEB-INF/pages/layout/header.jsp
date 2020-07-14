@@ -22,7 +22,16 @@
 	<script src="${mainJQuery}"></script>
 	 <script type="text/javascript">
 	 function deletePost(id) {
-			document.location = "deletePost?id="+id;
+		 var url = document.location;
+		 var param = url.toString().split("/");
+		 var route = param[param.length-1];
+		 alert(route);
+		 if(route == "searchPosts") {
+			 document.location = "searchDeletePost?id="+id;
+		 }
+		 else  {
+			 document.location = "deletePost?id="+id;
+		 }
 		}
 	</script>
 </head>

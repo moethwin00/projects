@@ -89,7 +89,6 @@ public class PostController {
 		} else {
 			return searchPostView;
 		}
-//	        session.setAttribute("SEARCH_POST_FORM", postForm);
 	}
 
 	private void doSearchProcess(ModelAndView view, int offset, Boolean resultSearch, PostForm postForm)
@@ -109,12 +108,18 @@ public class PostController {
 	}
 
 	@RequestMapping(value = "postlist/createpost", method = RequestMethod.GET)
-	public ModelAndView createpost(ModelAndView model, HttpSession session) {
-		if(session.getAttribute("LOGIN_USER") == null) {
+	public ModelAndView createpost(ModelAndView model, HttpSession session, HttpServletRequest request) {
+		if (session.getAttribute("LOGIN_USER") == null) {
 			return new ModelAndView("redirect:/login");
 		}
 		PostCreateForm postCreateForm = new PostCreateForm();
+		if (request.getParameter("postTitle") != null) {
+			postCreateForm.setTitle(request.getParameter("postTitle"));
+			postCreateForm.setDescription(request.getParameter("postDescription"));
+			postCreateForm.setStatus(Integer.parseInt(request.getParameter("postStatus")));
+		}
 		model.addObject("postForm", postCreateForm);
+		model.addObject("errorMsg", request.getParameter("errorMsg"));
 		model.addObject("pageTitle", "Create Post");
 		model.setViewName("createpost");
 		return model;
@@ -125,10 +130,9 @@ public class PostController {
 	        BindingResult result, HttpSession httpSession, HttpServletRequest request, HttpServletResponse response) {
 		if (result.hasErrors()) {
 			ModelAndView model = new ModelAndView("createpost");
-			if(postCreateForm.getId() == null) {
+			if (postCreateForm.getId() == null) {
 				model.addObject("pageTitle", "Create Post");
-			}
-			else {
+			} else {
 				model.addObject("pageTitle", "Update Post");
 			}
 			return model;
@@ -160,7 +164,6 @@ public class PostController {
 			User user = userService.getUserById(loginUserId);
 			post.setUser2(user);
 			if (!postCreateForm.isActive()) {
-				System.out.println(postCreateForm.isActive() + "********");
 				post.setStatus(0);
 			}
 			if (postCreateForm.isActive()) {
@@ -190,7 +193,7 @@ public class PostController {
 			model.addObject("title", request.getParameter("title"));
 			model.addObject("description", request.getParameter("description"));
 			model.addObject("active", request.getParameter("active"));
-			
+
 		}
 
 		model.addObject("pageTitle", "Create Post Confirmation");
@@ -211,6 +214,12 @@ public class PostController {
 		boolean active = (post.getStatus() == 1) ? true : false;
 		postCreateForm.setActive(active);
 		ModelAndView model = new ModelAndView();
+		if (request.getParameter("postTitle") != null) {
+			postCreateForm.setTitle(request.getParameter("postTitle"));
+			postCreateForm.setDescription(request.getParameter("postDescription"));
+			postCreateForm.setStatus(Integer.parseInt(request.getParameter("postStatus")));
+		}
+		model.addObject("errorMsg", request.getParameter("errorMsg"));
 		model.addObject("postForm", postCreateForm);
 		model.addObject("post", post);
 		model.addObject("pageTitle", "Update Post");
@@ -220,15 +229,15 @@ public class PostController {
 
 	@RequestMapping(value = "postlist/savePost/{id}/{title}/{description}/{status}", method = RequestMethod.GET)
 	public ModelAndView savePost(@PathVariable("id") int id, @PathVariable("title") String title,
-	        @PathVariable("description") String description, @PathVariable("status") int status,
-	        HttpSession session, HttpServletRequest request) {
+	        @PathVariable("description") String description, @PathVariable("status") int status, HttpSession session,
+	        HttpServletRequest request) {
 		PostCreateForm postCreateForm = new PostCreateForm();
 		if (id != 0) {
 			postCreateForm.setId(id);
 		}
 		postCreateForm.setTitle(title);
 		postCreateForm.setDescription(description);
-		boolean active = (status==1)?true:false;
+		boolean active = (status == 1) ? true : false;
 		postCreateForm.setActive(active);
 		Integer loginUserId = (Integer) request.getSession().getAttribute("loginUserId");
 		Date date = getDate();
@@ -241,7 +250,9 @@ public class PostController {
 
 			} else {
 				postService.addPost(post);
-				redirectPostList(model);
+				PostForm postForm = new PostForm();
+				model.addObject("postSearch", postForm);
+				model.setViewName("redirect:/postlist/");
 
 			}
 		} else {
@@ -251,12 +262,16 @@ public class PostController {
 					model = redirectErrorView(post);
 				} else {
 					postService.updatePost(post);
-					redirectPostList(model);
+					PostForm postForm = new PostForm();
+					model.addObject("postSearch", postForm);
+					model.setViewName("redirect:/postlist/");
 				}
 
 			} else {
 				postService.updatePost(post);
-				redirectPostList(model);
+				PostForm postForm = new PostForm();
+				model.addObject("postSearch", postForm);
+				model.setViewName("redirect:/postlist/");
 			}
 		}
 		return model;
@@ -268,21 +283,44 @@ public class PostController {
 		int userId = (Integer) request.getSession().getAttribute("loginUserId");
 		Date deletedDate = getDate();
 		postService.softDelete(Integer.parseInt(request.getParameter("id")), userId, deletedDate);
-		redirectPostList(model);
+		redirectPostList(model, request);
 		return model;
 	}
 
-	private void redirectPostList(ModelAndView model) {
+	@RequestMapping(value = "postlist/searchDeletePost")
+	public ModelAndView softSearchDelete(ModelAndView model, HttpServletRequest request, HttpSession session)
+	        throws ParseException {
+		int userId = (Integer) request.getSession().getAttribute("loginUserId");
+		Date deletedDate = getDate();
+		postService.softDelete(Integer.parseInt(request.getParameter("id")), userId, deletedDate);
 		PostForm postForm = new PostForm();
 		model.addObject("postSearch", postForm);
 		model.setViewName("redirect:/postlist/");
+		return model;
+	}
+
+	private void redirectPostList(ModelAndView model, HttpServletRequest request) {
+		PostForm postForm = new PostForm();
+		model.addObject("postSearch", postForm);
+		String referer = request.getHeader("Referer");
+		System.out.println(referer);
+		model.setViewName("redirect:" + referer);
 	}
 
 	private ModelAndView redirectErrorView(Post post) {
 		ModelAndView model = new ModelAndView();
 		model.addObject("errorMsg", messageSource.getMessage("MSG_0002", null, null));
-		model.setViewName("redirect:/postlist/confirmpost?id=" + post.getId() + "&title=" + post.getTitle()
-		        + "&description=" + post.getDescription());
+		if (post.getId() == 0) {
+			model.setViewName("redirect:/postlist/createpost");
+			model.addObject("postTitle", post.getTitle());
+			model.addObject("postDescription", post.getDescription());
+			model.addObject("postStatus", post.getStatus());
+		} else {
+			model.setViewName("redirect:/postlist/editPost?id=" + post.getId());
+			model.addObject("postTitle", post.getTitle());
+			model.addObject("postDescription", post.getDescription());
+			model.addObject("postStatus", post.getStatus());
+		}
 		return model;
 	}
 

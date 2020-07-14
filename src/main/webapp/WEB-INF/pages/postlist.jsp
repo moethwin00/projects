@@ -118,24 +118,23 @@
 					</div>
 				</div>
 			</c:forEach>
-
+			<p id="pagination-count" style="display:none">${paginationCount+1}</p>
 			<div
 				class="container text-center <c:if test="${postCount <= 7}">close-pagination</c:if>">
 				<div aria-label="Page navigation example"
 					class="container-pagination">
 					<ul class="pagination" id="post-pagination">
-
 						<c:if test="${postCount > 7}">
-							<li class="page-item"><a class="page-link"
+							<li class="page-item disabled" id="prev"><a class="page-link"
 								href="javascript:previousId();" aria-label="Previous"> <span
 									aria-hidden="true">&laquo;</span> <span class="sr-only">Previous</span>
 							</a></li>
-							<c:forEach var="i" begin="1" end="${paginationCount+1}">
-								<li class="page-item"><a class="page-link" href="${i}">${i}</a></li>
+							<c:forEach var="i" begin="1" end="${paginationCount}">
+								<li class="page-item" id="page-item${i}"><a class="page-link" href="${i}">${i}</a></li>
 							</c:forEach>
 						</c:if>
-						<li class="page-item"><a class="page-link"
-							href="javascript:nextId(${paginationCount+1});" aria-label="Next">
+						<li class="page-item" id="next"><a class="page-link"
+							href="javascript:nextId(${paginationCount});" aria-label="Next">
 								<span aria-hidden="true">&raquo;</span> <span class="sr-only">Next</span>
 						</a></li>
 					</ul>

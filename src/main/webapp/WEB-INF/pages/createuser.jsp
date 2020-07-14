@@ -40,7 +40,10 @@
 				<form:input type="password" path="password" class="form-control" />
 			</div>
 			<div class="col-md-6 col-sm-4 col-12">
-				<small><form:errors class="text-danger" path="password" /></small>
+				<small class="text-danger"> 
+					<form:errors path="password" />
+					<c:if test="${passwordMismatchError != null}">${passwordMismatchError}</c:if>
+				</small>
 			</div>
 		</div>
 		<div class="row mb-3">
@@ -50,10 +53,6 @@
 			<div class="col-md-4 col-sm-5 col-6">
 				<form:input type="password" path="confirmPassword"
 					class="form-control" />
-			</div>
-			<div class="col-md-6 col-sm-4 col-12">
-				<small><form:errors class="text-danger"
-						path="confirmPassword" /></small>
 			</div>
 		</div>
 		<div class="row mb-3">
@@ -67,8 +66,7 @@
 				</form:select>
 			</div>
 			<div class="col-md-6 col-sm-4 col-12">
-				<small><form:errors class="text-danger"
-						path="confirmPassword" /></small>
+				<small><form:errors class="text-danger" path="type" /></small>
 			</div>
 		</div>
 		<div class="row mb-3">
@@ -76,11 +74,10 @@
 				<label><span>Phone</span></label>
 			</div>
 			<div class="col-md-4 col-sm-5 col-6">
-				<form:input type="text" path="phone" class="form-control"/>
+				<form:input type="text" path="phone" class="form-control" />
 			</div>
 			<div class="col-md-6 col-sm-4 col-12">
-				<small><form:errors class="text-danger"
-						path="phone" /></small>
+				<small><form:errors class="text-danger" path="phone" /></small>
 			</div>
 		</div>
 		<div class="row mb-3">
@@ -88,11 +85,10 @@
 				<label><span>Date Of Birth</span></label>
 			</div>
 			<div class="col-md-4 col-sm-5 col-6">
-				<form:input type="date" path="dob" class="form-control"/>
+				<form:input type="date" path="dob" class="form-control" />
 			</div>
 			<div class="col-md-6 col-sm-4 col-12">
-				<small><form:errors class="text-danger"
-						path="dob" /></small>
+				<small><form:errors class="text-danger" path="dob" /></small>
 			</div>
 		</div>
 		<div class="row mb-3">
@@ -103,8 +99,7 @@
 				<form:textarea path="address" class="form-control"></form:textarea>
 			</div>
 			<div class="col-md-6 col-sm-4 col-12">
-				<small><form:errors class="text-danger"
-						path="address" /></small>
+				<small><form:errors class="text-danger" path="address" /></small>
 			</div>
 		</div>
 		<div class="row mb-3">
@@ -115,13 +110,16 @@
 				<form:input type="file" path="profile" class="form-control" />
 			</div>
 			<div class="col-md-6 col-sm-4 col-12">
-				<small><form:errors class="text-danger"
-						path="profile" /></small>
+				<small><form:errors class="text-danger" path="profile" /></small>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-6 text-right"><input type="submit" class="btn btn-primary" value="Confirm"></div>
-			<div class="col-6 text-left"><input type="reset" class="btn btn-outline-success" value="Cancel"></div>
+			<div class="col-6 text-right">
+				<input type="submit" class="btn btn-primary" value="Confirm">
+			</div>
+			<div class="col-6 text-left">
+				<input type="reset" class="btn btn-outline-success" value="Cancel">
+			</div>
 		</div>
 	</form:form>
 </div>

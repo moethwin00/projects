@@ -20,9 +20,18 @@
 				</div> --%>
 				<form:hidden path="id" />
 				<div class="row mb-3">
+					<div class="col-md-6">
+						<c:if test="${errorMsg != null }">
+							<div class="alert alert-danger alert-dismissible fade show" role="alert">
+								<i class="far fa-times-circle close" data-dismiss="alert" aria-label="Close"></i> <strong>${errorMsg }</strong>
+							</div>
+						</c:if>
+					</div>
+				</div>
+				<div class="row mb-3">
 					<div class="col-md-2"><label><span>Title</span></label></div>
-					<div class="col-md-4"><form:input type="text" path="title" class="form-control" /></div>
-					<div class="col-md-6"><small><form:errors class="text-danger" path="title"/></small></div>
+					<div class="col-md-4"><form:input type="text" path="title" class="form-control" value="${postTitle}"/></div>
+					<div class="col-md-6"><small><form:errors class="text-danger" path="title" /></small></div>
 				</div>
 				<div class="row mb-3">
 					<div class="col-md-2"><label><span>Description</span></label></div>

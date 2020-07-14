@@ -50,7 +50,7 @@ public class PostDAOImpl implements PostDAO {
 	@SuppressWarnings("unchecked")
 	public List<Post> getPostsBySearchkey(String searchKey) {
 		Query query = sessionFactory.getCurrentSession().createQuery(
-		        "from Post as p where p.title LIKE '%" + searchKey + "%' or p.description LIKE '%" + searchKey + "%'");
+		        "from Post as p where (p.title LIKE '%" + searchKey + "%' or p.description LIKE '%" + searchKey + "%') and p.deletedUserId = "+null+" and p.deletedAt = "+null);
 		return query.list();
 	}
 

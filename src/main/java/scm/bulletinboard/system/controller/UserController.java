@@ -113,11 +113,14 @@ public class UserController {
 	}
 //
 	@RequestMapping(value = "userlist/createuser", method = RequestMethod.GET)
-	public ModelAndView createuser(ModelAndView model, HttpSession session) {
+	public ModelAndView createuser(ModelAndView model, HttpSession session, HttpServletRequest request) {
 		if(session.getAttribute("LOGIN_USER") == null) {
 			return new ModelAndView("redirect:/login");
 		}
 		UserCreateForm userCreateForm = new UserCreateForm();
+		if (request.getParameter("userEmail") != null) {
+			userCreateForm.setName(request.getParameter("userName"));
+		}
 		model.addObject("userForm", userCreateForm);
 		model.addObject("pageTitle", "Create User");
 		model.setViewName("createuser");
@@ -130,8 +133,11 @@ public class UserController {
 		if(session.getAttribute("LOGIN_USER") == null) {
 			return new ModelAndView("redirect:/login");
 		}
-		if (result.hasErrors()) {
+		if (result.hasErrors() || !userCreateForm.getPassword().equals(userCreateForm.getConfirmPassword())) {
 			ModelAndView model = new ModelAndView("createuser");
+			if(!userCreateForm.getPassword().equals(userCreateForm.getConfirmPassword())) {
+				model.addObject("passwordMismatchError", messageSource.getMessage("MSG_0005", null, null));
+			}
 			return model;
 		}
 		return new ModelAndView();

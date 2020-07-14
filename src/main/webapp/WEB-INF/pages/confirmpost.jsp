@@ -30,7 +30,7 @@
 					<div class="col-md-4"><p>${post.description}</p></div>
 				</div>
 				<div class="row">
-					<div class="col-md-2 text-right"><a href="savePost/<c:if test='${errorMsg == null }'>${post.id}/${post.title}/${post.description}/${post.status}</c:if><c:if test='${errorMsg != null }'>${post.id}/${title}/${description}/${status}</c:if>" class="btn btn-primary">
+					<div class="col-md-2 text-right"><a href="<c:if test='${errorMsg == null }'>savePost/${post.id}/${post.title}/${post.description}/${post.status}</c:if><c:if test='${errorMsg != null }'>editPost?id=${post.id}</c:if>" class="btn btn-primary">
 						<c:if test="${post.id == 0}">Create</c:if>
 						<c:if test="${post.id != 0}">Update</c:if>
 						</a>
