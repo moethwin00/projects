@@ -1,5 +1,7 @@
 package scm.bulletinboard.system.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,13 +23,13 @@ public class User {
 	private String type;
 	private String phone;
 	private String address;
-	private String dob;
+	private Date dob;
 	private int createUserId;
 	private int updatedUserId;
 	private Integer deletedUserId;
-	private String createdAt;
-	private String updatedAt;
-	private String deletedAt;
+	private Date createdAt;
+	private Date updatedAt;
+	private Date deletedAt;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -104,11 +106,11 @@ public class User {
 	}
 
 	@Column(nullable = true, name = "dob")
-	public String getDob() {
+	public Date getDob() {
 		return dob;
 	}
 
-	public void setDob(String dob) {
+	public void setDob(Date dob) {
 		this.dob = dob;
 	}
 
@@ -141,29 +143,29 @@ public class User {
 	}
 
 	@Column(name = "created_at")
-	public String getCreatedAt() {
+	public Date getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(String createdAt) {
+	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
 
 	@Column(name = "updated_at")
-	public String getUpdatedAt() {
+	public Date getUpdatedAt() {
 		return updatedAt;
 	}
 
-	public void setUpdatedAt(String updatedAt) {
+	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
 	}
 
 	@Column(name = "deleted_at")
-	public String getDeletedAt() {
+	public Date getDeletedAt() {
 		return deletedAt;
 	}
 
-	public void setDeletedAt(String deletedAt) {
+	public void setDeletedAt(Date deletedAt) {
 		this.deletedAt = deletedAt;
 	}
 	

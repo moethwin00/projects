@@ -7,9 +7,21 @@
 <jsp:include page="layout/header.jsp"></jsp:include>
 <jsp:include page="layout/menu.jsp"></jsp:include>
 <div class="container post-container">
-	<h5 class="h5 mb-3">Create User</h5>
-	<form:form mehtod="post" action="confirmuser" modelAttribute="userForm">
+	<h5 class="h5 mb-3">${pageTitle}</h5>
+	<form:form mehtod="post" action="confirmuser" modelAttribute="userForm"
+		enctype="multipart/form-data">
 		<form:hidden path="id" />
+		<div class="row mb-3">
+			<div class="col-md-6">
+				<c:if test="${errorMsg != null }">
+					<div class="alert alert-danger alert-dismissible fade show"
+						role="alert">
+						<i class="far fa-times-circle close" data-dismiss="alert"
+							aria-label="Close"></i> <strong>${errorMsg }</strong>
+					</div>
+				</c:if>
+			</div>
+		</div>
 		<div class="row mb-3">
 			<div class="col-md-2 col-sm-3 col-6">
 				<label><span>Name</span></label>
@@ -40,8 +52,7 @@
 				<form:input type="password" path="password" class="form-control" />
 			</div>
 			<div class="col-md-6 col-sm-4 col-12">
-				<small class="text-danger"> 
-					<form:errors path="password" />
+				<small class="text-danger"> <form:errors path="password" />
 					<c:if test="${passwordMismatchError != null}">${passwordMismatchError}</c:if>
 				</small>
 			</div>
@@ -107,7 +118,13 @@
 				<label><span>Profile</span></label>
 			</div>
 			<div class="col-md-4 col-sm-5 col-6">
-				<form:input type="file" path="profile" class="form-control" />
+				<div class="input-group">
+					<input type="file" name="fileUpload" id="fileUpload"
+						accept="image/*" value="${imageData}"
+						onchange="showImage.call(this)" /> <input name="imageData"
+						type="hidden" id="imageData" value="" />
+					<form:input path="profile" type="hidden" value="${imageData }" />
+				</div>
 			</div>
 			<div class="col-md-6 col-sm-4 col-12">
 				<small><form:errors class="text-danger" path="profile" /></small>

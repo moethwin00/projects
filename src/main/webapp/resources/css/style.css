@@ -4,28 +4,33 @@
 	padding: 5px 20px;
 	background-color: #5b9bd5;
 }
+
 .navitem-right-border {
 	border-right: 1px solid #000;
 }
+
 .post-container {
 	margin: 0 auto;
 }
+
 .btn-post-list {
 	padding: 5px 10px;
 	text-align: center;
 	width: 97px;
 }
+
 .close-pagination {
 	display: none;
 }
+
 .page-item {
 	margin-right: 3px;
 }
-.pagination > li > a
-{
-    background-color: #5b9bd5;
-    color: #fff;
-    border: 1px solid #41719c;
+
+.pagination>li>a {
+	background-color: #5b9bd5;
+	color: #fff;
+	border: 1px solid #41719c;
 }
 
 .pagination, .page-item, .page-item a {
@@ -33,5 +38,5 @@
 }
 
 .txt-post-date {
-    padding-top: 7px;
+	padding-top: 7px;
 }

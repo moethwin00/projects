@@ -1,5 +1,6 @@
 package scm.bulletinboard.system.service;
 
+import java.util.Date;
 import java.util.List;
 import scm.bulletinboard.system.model.User;
 
@@ -18,4 +19,10 @@ public interface UserService {
 
 	public List<User> getUsersBySearchkeys(String searchName, String searchEmail, String searchCreatedFrom,
 	        String searchCreatedTo);
+	
+	public Date getDateData();
+	
+	public void addUser(User user);
+	
+	public User updateUser(User user);
 }

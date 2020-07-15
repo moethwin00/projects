@@ -1,5 +1,7 @@
 package scm.bulletinboard.system.service.impl;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -55,6 +57,4 @@ public class PostServiceImpl implements PostService {
 	public void softDelete(int id, int userId, Date deletedDate) {
 		postDAO.softDelete(id, userId, deletedDate);
 	}
-	
-
 }

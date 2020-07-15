@@ -12,10 +12,10 @@
 		<div class="container">
 		
 			<div class="row">
-				<div class="col-md-2 mb-1 col-sm-6"><form:input type="text" class="form-control" path="name"/></div>
-				<div class="col-md-2 mb-1 col-sm-6"><form:input type="text" class="form-control" path="email"/></div>
-				<div class="col-md-2 mb-1 col-sm-6"><form:input type="date" class="form-control" path="createdFrom"/></div>
-				<div class="col-md-2 mb-1 col-sm-6"><form:input type="date" class="form-control" path="createdTo"/></div>
+				<div class="col-md-2 mb-1 col-sm-6"><form:input type="text" class="form-control" path="name" value="${searchName}"/></div>
+				<div class="col-md-2 mb-1 col-sm-6"><form:input type="text" class="form-control" path="email" value="${searchEmail}"/></div>
+				<div class="col-md-2 mb-1 col-sm-6"><form:input type="date" class="form-control" path="createdFrom" value="${searchCreatedFrom}"/></div>
+				<div class="col-md-2 mb-1 col-sm-6"><form:input type="date" class="form-control" path="createdTo" value="${searchCreatedTo}"/></div>
 				<div class="col-md-2 mb-1 col-sm-6"><input type="submit" value="Search" class="btn btn-primary btn-post-list"></div>
 				<div class="col-md-2 mb-1 col-sm-6"><a href="createuser" class="btn btn-primary btn-post-list">Add</a></div>
 			</div>

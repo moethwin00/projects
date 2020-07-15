@@ -138,19 +138,12 @@ public class PostController {
 			return model;
 		} else {
 			Integer loginUserId = (Integer) request.getSession().getAttribute("loginUserId");
-			Date date = getDate();
+			Date date = userService.getDateData();
 			Post post = addNewPost(postCreateForm, loginUserId, date);
 			ModelAndView model = new ModelAndView("/confirmpost");
 			model.addObject("post", post);
 			return model;
 		}
-	}
-
-	private Date getDate() {
-		DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
-		Date date = new Date();
-		dateFormatter.format(date);
-		return date;
 	}
 
 	private Post addNewPost(PostCreateForm postCreateForm, Integer loginUserId, Date date) {
@@ -240,7 +233,7 @@ public class PostController {
 		boolean active = (status == 1) ? true : false;
 		postCreateForm.setActive(active);
 		Integer loginUserId = (Integer) request.getSession().getAttribute("loginUserId");
-		Date date = getDate();
+		Date date = userService.getDateData();
 		Post post = addNewPost(postCreateForm, loginUserId, date);
 		ModelAndView model = new ModelAndView();
 		if (id == 0) {
@@ -281,7 +274,7 @@ public class PostController {
 	@RequestMapping(value = "postlist/deletePost")
 	public ModelAndView softDelete(ModelAndView model, HttpServletRequest request, HttpSession session) {
 		int userId = (Integer) request.getSession().getAttribute("loginUserId");
-		Date deletedDate = getDate();
+		Date deletedDate = userService.getDateData();
 		postService.softDelete(Integer.parseInt(request.getParameter("id")), userId, deletedDate);
 		redirectPostList(model, request);
 		return model;
@@ -291,7 +284,7 @@ public class PostController {
 	public ModelAndView softSearchDelete(ModelAndView model, HttpServletRequest request, HttpSession session)
 	        throws ParseException {
 		int userId = (Integer) request.getSession().getAttribute("loginUserId");
-		Date deletedDate = getDate();
+		Date deletedDate = userService.getDateData();
 		postService.softDelete(Integer.parseInt(request.getParameter("id")), userId, deletedDate);
 		PostForm postForm = new PostForm();
 		model.addObject("postSearch", postForm);

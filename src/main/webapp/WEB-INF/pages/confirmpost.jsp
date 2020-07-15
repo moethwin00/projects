@@ -6,21 +6,12 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <jsp:include page="layout/header.jsp"></jsp:include>
 <jsp:include page="layout/menu.jsp"></jsp:include>
-<div class = "container text-center post-container">
+<div class = "container post-container">
 	<h5 class="h5 mb-3">
 		<c:if test="${post.id == 0}">Create Post Confirmation</c:if>
 		<c:if test="${post.id != 0}">Update Post Confirmation</c:if>
 	</h5>
 	<%-- <form method="post" action="savePost"> --%>
-				<div class="row mb-3">
-					<div class="col-md-6">
-						<c:if test="${errorMsg != null }">
-							<div class="alert alert-danger alert-dismissible fade show" role="alert">
-								<i class="far fa-times-circle close" data-dismiss="alert" aria-label="Close"></i> <strong>${errorMsg }</strong>
-							</div>
-						</c:if>
-					</div>
-				</div>
 				<div class="row mb-3">
 					<div class="col-md-2"><label><span class="align-middle">Title</span></label></div>
 					<div class="col-md-4"><p>${post.title}</p></div>

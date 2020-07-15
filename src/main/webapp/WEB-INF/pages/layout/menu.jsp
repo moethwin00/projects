@@ -24,7 +24,7 @@
 		    </form>
 		    </c:if>
 		    <c:if test="${LOGIN_USER == null}">
-				<a class="btn btn-outline-success my-2 my-sm-0" href="${pageContext.request.contextPath}/login">Login</a>
+				<a class="btn btn-outline-success my-2 my-sm-0" href="${pageContext.request.contextPath}/login" onclick="noback()">Login</a>
 		    </c:if>
 	  	</div>
   	</div>

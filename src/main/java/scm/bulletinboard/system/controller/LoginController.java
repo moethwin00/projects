@@ -1,5 +1,9 @@
 package scm.bulletinboard.system.controller;
 
+import java.io.IOException;
+import java.util.Date;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -71,8 +75,14 @@ public class LoginController {
 	}
 
 	@RequestMapping(value = "logout", method = RequestMethod.GET)
-	public ModelAndView logout(Model model, HttpSession session) {
-		session.removeAttribute("LOGIN_USER");
+	public ModelAndView logout(Model model, HttpSession session, HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+		resp.setDateHeader("Expires", 0);
+        resp.setHeader("Last-Modified", new Date().toString());
+        resp.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0");
+        resp.setHeader("Pragma", "no-cache");
+        resp.setHeader("X-Content-Type-Options", "nosniff");
+        resp.setHeader("X-Frame-Options", "DENY");
+		session.removeAttribute("loginUserName");
 		session.invalidate();
 		ModelAndView loginView = new ModelAndView("redirect:/login");
 		return loginView;

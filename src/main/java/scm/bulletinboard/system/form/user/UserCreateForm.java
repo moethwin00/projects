@@ -49,6 +49,14 @@ public class UserCreateForm implements Serializable {
 	String address;
 	String profile;
 
+	public String getProfile() {
+		return profile;
+	}
+
+	public void setProfile(String profile) {
+		this.profile = profile;
+	}
+
 	public String getPhone() {
 		return phone;
 	}
@@ -123,14 +131,6 @@ public class UserCreateForm implements Serializable {
 
 	public void setAddress(String address) {
 		this.address = address;
-	}
-
-	public String getProfile() {
-		return profile;
-	}
-
-	public void setProfile(String profile) {
-		this.profile = profile;
 	}
 
 }

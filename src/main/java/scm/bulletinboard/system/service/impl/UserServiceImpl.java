@@ -1,5 +1,8 @@
 package scm.bulletinboard.system.service.impl;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,6 +53,22 @@ public class UserServiceImpl implements UserService {
 	        String searchCreatedTo) {
 		return userDAO.getUsersBySearchkeys(searchName, searchEmail, searchCreatedFrom,
 		        searchCreatedTo);
+	}
+
+	public Date getDateData() {
+		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = new Date();
+		dateFormatter.format(date);
+		return date;
+	}
+
+	public void addUser(User user) {
+		userDAO.addUser(user);
+		
+	}
+
+	public User updateUser(User user) {
+		return userDAO.updateUser(user);
 	}
 
 }

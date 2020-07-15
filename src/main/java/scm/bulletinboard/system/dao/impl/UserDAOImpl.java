@@ -75,4 +75,14 @@ public class UserDAOImpl implements UserDAO {
 		Query query = sessionFactory.getCurrentSession().createQuery(hql);
 		return query.list();
 	}
+
+	public void addUser(User user) {
+		sessionFactory.getCurrentSession().saveOrUpdate(user);
+	}
+
+	public User updateUser(User user) {
+		sessionFactory.getCurrentSession().update(user);
+		return user;
+	}
+
 }
