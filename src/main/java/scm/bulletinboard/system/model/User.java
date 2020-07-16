@@ -11,10 +11,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import scm.bulletinboard.system.form.user.UserCreateForm;
+
 @Entity
 @Table(name = "users")
 public class User {
-	
+
 	private int id;
 	private String name;
 	private String email;
@@ -23,7 +25,7 @@ public class User {
 	private String type;
 	private String phone;
 	private String address;
-	private Date dob;
+	private String dob;
 	private int createUserId;
 	private int updatedUserId;
 	private Integer deletedUserId;
@@ -50,7 +52,7 @@ public class User {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	@Column(name = "email")
 	public String getEmail() {
 		return email;
@@ -59,7 +61,7 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
+
 	@Column(name = "password")
 	public String getPassword() {
 		return password;
@@ -106,11 +108,11 @@ public class User {
 	}
 
 	@Column(nullable = true, name = "dob")
-	public Date getDob() {
+	public String getDob() {
 		return dob;
 	}
 
-	public void setDob(Date dob) {
+	public void setDob(String dob) {
 		this.dob = dob;
 	}
 
@@ -168,5 +170,24 @@ public class User {
 	public void setDeletedAt(Date deletedAt) {
 		this.deletedAt = deletedAt;
 	}
-	
+
+	public User(String name, String email, String password, String profile, String type, String phone, String address,
+	        String dob, int createUserId, int updatedUserId, Date createdAt, Date updatedAt) {
+		this.name = name;
+		this.email = email;
+		this.password = password;
+		this.profile = profile;
+		this.type = type;
+		this.phone = phone;
+		this.address = address;
+		this.dob = dob;
+		this.createUserId = createUserId;
+		this.updatedUserId = updatedUserId;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
+	}
+
+	public User() {
+	}
+
 }

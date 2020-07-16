@@ -1,7 +1,11 @@
 package scm.bulletinboard.system.service;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+
+import scm.bulletinboard.system.form.user.UserCreateForm;
 import scm.bulletinboard.system.model.User;
 
 public interface UserService {
@@ -22,7 +26,7 @@ public interface UserService {
 	
 	public Date getDateData();
 	
-	public void addUser(User user);
+	public void insertUser(UserCreateForm userForm, int loginUserId, String profilePath) throws ParseException, IOException;
 	
 	public User updateUser(User user);
 }

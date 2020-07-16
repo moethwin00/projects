@@ -42,9 +42,7 @@ public class UserCreateForm implements Serializable {
 	@Phone
 	String phone;
 
-	@DateTimeFormat(iso = ISO.DATE)
-	@Past(message = "*Date Of Birth should be past")
-	Date dob;
+	String dob;
 	
 	String address;
 	String profile;
@@ -117,11 +115,11 @@ public class UserCreateForm implements Serializable {
 		this.type = type;
 	}
 
-	public Date getDob() {
+	public String getDob() {
 		return dob;
 	}
 
-	public void setDob(Date dob) {
+	public void setDob(String dob) {
 		this.dob = dob;
 	}
 

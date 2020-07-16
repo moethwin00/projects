@@ -2,10 +2,13 @@ package scm.bulletinboard.system.controller;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -128,6 +131,7 @@ public class UserController {
 		if (session.getAttribute("LOGIN_USER") == null) {
 			return new ModelAndView("redirect:/login");
 		}
+
 		UserCreateForm userCreateForm = new UserCreateForm();
 		if (request.getParameter("userEmail") != null) {
 			User existUser = userService.getUserByEmail(request.getParameter("userEmail"));
@@ -137,10 +141,12 @@ public class UserController {
 			userCreateForm.setPassword(existUser.getPassword());
 			userCreateForm.setType(Integer.parseInt(existUser.getType()));
 			userCreateForm.setPhone(existUser.getPhone());
-			userCreateForm.setDob(existUser.getDob());
+			userCreateForm.setDob(existUser.getDob().toString());
 			userCreateForm.setAddress(existUser.getAddress());
 			userCreateForm.setProfile(existUser.getProfile());
 		}
+		model.addObject("errorMsg", request.getParameter("errorMsg"));
+		model.addObject("name", request.getParameter("name"));
 		model.addObject("userForm", userCreateForm);
 		model.addObject("pageTitle", "Create User");
 		model.setViewName("createuser");
@@ -151,7 +157,7 @@ public class UserController {
 	@RequestMapping(value = "/userlist/confirmuser", method = RequestMethod.POST)
 	public ModelAndView saveUser(@Validated @ModelAttribute(value = "userForm") UserCreateForm userCreateForm,
 	        BindingResult result, HttpSession session, HttpServletRequest request, HttpServletResponse response,
-	        @RequestParam("imageData") String imageData) {
+	        @RequestParam("imageData") String imageData) throws ParseException {
 		if (session.getAttribute("LOGIN_USER") == null) {
 			return new ModelAndView("redirect:/login");
 		}
@@ -173,6 +179,7 @@ public class UserController {
 			user.setProfile(imageData);
 			ModelAndView model = new ModelAndView("/confirmuser");
 			model.addObject("user", user);
+			model.addObject("profile", userCreateForm.getProfile());
 			return model;
 
 //			String path=session.getServletContext().getRealPath("/");  
@@ -192,7 +199,7 @@ public class UserController {
 		}
 	}
 
-	private User addNewUser(UserCreateForm userCreateForm, Integer loginUserId, Date date) {
+	private User addNewUser(UserCreateForm userCreateForm, Integer loginUserId, Date date) throws ParseException {
 		User user = new User();
 		if (userCreateForm.getId() != null) {
 			User oldUser = userService.getUserById(userCreateForm.getId());
@@ -231,7 +238,7 @@ public class UserController {
 		model.addObject("pageTitle", "Create Post Confirmation");
 		model.addObject("btnText", "Create");
 		model.addObject("user", user);
-		model.setViewName("confirmpost");
+		model.setViewName("confirmuser");
 		return model;
 	}
 
@@ -257,89 +264,26 @@ public class UserController {
 		return model;
 	}
 
-	@RequestMapping(value = "userlist/saveUser/{id}/{name}/{email}/{password}/{profile}/{type}/{phone}/{dob}/{address}", method = RequestMethod.GET)
-	public ModelAndView savePost(@PathVariable("id") int id, @PathVariable("name") String name,
-	        @PathVariable("email") String email, @PathVariable("password") String password,
-	        @PathVariable("profile") String profile, @PathVariable("type") String type,
-	        @PathVariable("phone") String phone, @PathVariable("dob") Date dob, @PathVariable("address") String address,
-	        HttpSession session, HttpServletRequest request, @RequestParam CommonsMultipartFile file) {
-		UserCreateForm userCreateForm = new UserCreateForm();
-		if (id != 0) {
-			userCreateForm.setId(id);
-		}
-
-		String path = session.getServletContext().getRealPath("/profiles");
-		String filename = file.getOriginalFilename();
-
-		System.out.println(path + " " + filename);
-		try {
-			byte barr[] = file.getBytes();
-
-			BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(path + "/" + filename));
-			bout.write(barr);
-			bout.flush();
-			bout.close();
-
-		} catch (Exception e) {
-			System.out.println(e);
-		}
-
-		userCreateForm.setName(name);
-		userCreateForm.setEmail(email);
-		userCreateForm.setPassword(password);
-		userCreateForm.setType(Integer.parseInt(type));
-		userCreateForm.setPhone(phone);
-		userCreateForm.setDob(dob);
-		userCreateForm.setAddress(address);
-		userCreateForm.setProfile(profile);
-		Integer loginUserId = (Integer) request.getSession().getAttribute("loginUserId");
-		Date date = userService.getDateData();
-		User user = addNewUser(userCreateForm, loginUserId, date);
+	@RequestMapping(value = "userlist/insertUser", method = RequestMethod.POST)
+	public ModelAndView insert(@ModelAttribute("user") UserCreateForm userCreateForm, HttpSession session, HttpServletRequest request) throws ParseException, IOException {
+		int loginUserId = (Integer) request.getSession().getAttribute("loginUserId");
+		@SuppressWarnings("deprecation")
+		String userProfilePath = request.getRealPath("/") + "/resources/profiles"; 
+		
+		User userForCheck = userService.getUserByEmail(userCreateForm.getEmail());
 		ModelAndView model = new ModelAndView();
-		if (id == 0) {
-			User userForCheck = userService.getUserByEmail(email);
 			if (userForCheck != null) {
-				model = redirectErrorView(user);
+				model.addObject("errorMsg", messageSource.getMessage("MSG_0006", null, null));
+				model.addObject("userForm", userCreateForm);
+				model.addObject("name", userCreateForm.getName());
+				model.setViewName("redirect:/userlist/createuser");
 
 			} else {
-				userService.addUser(user);
-				redirectUserList(model);
-
+				userService.insertUser(userCreateForm, loginUserId, userProfilePath);
+				UserForm userForm = new UserForm();
+				model.addObject("userSearch", userForm);
+				model.setViewName("redirect:/userlist/");
 			}
-		} else {
-			User userForCheck = userService.getUserByEmail(email);
-			if (userForCheck != null && userForCheck.getId() != user.getId()) {
-				if (userForCheck.getId() != user.getId()) {
-					model = redirectErrorView(user);
-				} else {
-					userService.updateUser(user);
-					redirectUserList(model);
-				}
-
-			} else {
-				userService.updateUser(user);
-				redirectUserList(model);
-			}
-		}
-		return model;
-	}
-
-	private void redirectUserList(ModelAndView model) {
-		UserForm postForm = new UserForm();
-		model.addObject("postSearch", postForm);
-		model.setViewName("redirect:/postlist/");
-	}
-
-	private ModelAndView redirectErrorView(User user) {
-		ModelAndView model = new ModelAndView();
-		model.addObject("errorMsg", messageSource.getMessage("MSG_0002", null, null));
-		if (user.getId() == 0) {
-			model.setViewName("redirect:/userlist/createuser");
-			model.addObject("user", user);
-		} else {
-			model.setViewName("redirect:/userlist/editUser?id=" + user.getId());
-			model.addObject("user", user);
-		}
 		return model;
 	}
 }

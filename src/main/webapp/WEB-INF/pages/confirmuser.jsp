@@ -9,95 +9,102 @@
 <jsp:include page="layout/menu.jsp"></jsp:include>
 <div class="container post-container">
 	<h5 class="h5 mb-3">
-		<c:if test="${post.id == 0}">Create User Confirmation</c:if>
-		<c:if test="${post.id != 0}">Update User Confirmation</c:if>
+		<c:if test="${user.id == 0}">Create User Confirmation</c:if>
+		<c:if test="${user.id != 0}">Update User Confirmation</c:if>
 	</h5>
-	<div class="row">
-		<div class="col-md-6">
-			<div class="row mb-1 pt-2">
-				<div class="col-md-4">
-					<label><span class="align-middle">Name</span></label>
+	<form:form method="post" action="insertUser" modelAttribute="user">
+		<div class="row">
+			<div class="col-md-6">
+				<form:hidden path="id" value="${user.id}" />
+				<div class="row mb-1 pt-2">
+					<div class="col-md-4">
+						<label><span class="align-middle">Name</span></label>
+					</div>
+					<div class="col-md-8">
+						<p>${user.name}</p>
+						<form:hidden path="name" value="${user.name}" />
+					</div>
 				</div>
-				<div class="col-md-8">
-					<p>${user.name}</p>
+				<div class="row mb-1">
+					<div class="col-md-4">
+						<label><span class="align-middle">Email</span></label>
+					</div>
+					<div class="col-md-8">
+						<p>${user.email}</p>
+						<form:hidden path="email" value="${user.email}"/>
+					</div>
 				</div>
-			</div>
-			<div class="row mb-1">
-				<div class="col-md-4">
-					<label><span class="align-middle">Email</span></label>
+				<div class="row mb-1">
+					<div class="col-md-4">
+						<label><span class="align-middle">Password</span></label>
+					</div>
+					<div class="col-md-8">
+						<form:input
+								style="background-color: transparent; border: 1px solid transparent"
+								type="password" value="${user.password}" path="password" disabled="true" />
+						<form:hidden path="password" value="${user.password}" />
+					</div>
 				</div>
-				<div class="col-md-8">
-					<p>${user.email}</p>
+				<div class="row mb-1">
+					<div class="col-md-4">
+						<label><span class="align-middle">Type</span></label>
+					</div>
+					<div class="col-md-8">
+						<p>
+							<c:if test="${user.type == 0}">Admin</c:if>
+							<c:if test="${user.type == 1}">User</c:if>
+						</p>
+						<form:hidden path="type" value="${user.type}" />
+					</div>
 				</div>
-			</div>
-			<div class="row mb-1">
-				<div class="col-md-4">
-					<label><span class="align-middle">Password</span></label>
+				<div class="row mb-1">
+					<div class="col-md-4">
+						<label><span class="align-middle">Phone</span></label>
+					</div>
+					<div class="col-md-8">
+						<p>${user.phone}</p>
+						<form:hidden path="phone" value="${user.phone}" />
+					</div>
 				</div>
-				<div class="col-md-8">
-					<p>
-						<input
-							style="background-color: transparent; border: 1px solid transparent"
-							type="password" value="${user.password}" disabled>
-					</p>
+				<div class="row mb-1">
+					<div class="col-md-4">
+						<label><span class="align-middle">Date of Birth</span></label>
+					</div>
+					<div class="col-md-8">
+						<p>
+							${user.dob}
+						<%-- 	<fmt:formatDate value="${user.dob}" pattern="dd/MM/yyyy" /> --%>
+						</p>
+						<form:hidden path="dob" value="${user.dob}"/>
+					</div>
 				</div>
-			</div>
-			<div class="row mb-1">
-				<div class="col-md-4">
-					<label><span class="align-middle">Type</span></label>
-				</div>
-				<div class="col-md-8">
-					<p>
-						<c:if test="${user.type == 0}">Admin</c:if>
-						<c:if test="${user.type == 1}">User</c:if>
-					</p>
-				</div>
-			</div>
-			<div class="row mb-1">
-				<div class="col-md-4">
-					<label><span class="align-middle">Phone</span></label>
-				</div>
-				<div class="col-md-8">
-					<p>${user.phone}</p>
-				</div>
-			</div>
-			<div class="row mb-1">
-				<div class="col-md-4">
-					<label><span class="align-middle">Date of Birth</span></label>
-				</div>
-				<div class="col-md-8">
-					<p>
-						<fmt:formatDate value="${user.dob}" pattern="dd/MM/yyyy" />
-					</p>
-				</div>
-			</div>
-			<div class="row mb-1">
-				<div class="col-md-4">
-					<label><span class="align-middle">Address</span></label>
-				</div>
-				<div class="col-md-8">
-					<p>${user.address}</p>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-4 text-right">
-					<a
-						href="<c:if test='${errorMsg == null }'>saveUser/${user.id}/${user.name}/${user.email}/${user.password}/${user.profile}/${user.type}/${user.phone}/${user.dob}/${user.address}</c:if>
-				<c:if test='${errorMsg != null }'>editPost?id=${user.id}</c:if>"
-						class="btn btn-primary"> <c:if test="${user.id == 0}">Create</c:if>
-						<c:if test="${user.id != 0}">Update</c:if>
-					</a>
-				</div>
-				<div class="col-md-8 text-left">
-					<a href="createpost" class="btn btn-outline-success">Cancel</a>
+				<div class="row mb-1">
+					<div class="col-md-4">
+						<label><span class="align-middle">Address</span></label>
+					</div>
+					<div class="col-md-8">
+						<p>${user.address}</p>
+						<form:hidden path="address" value="${user.address}"/>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="col-md-6">
-			<div class="container-profile">
-				<img src="${user.profile}" class="img-profile img img-fluid img-thumbnail" alt="Image preview...">
+			<div class="col-md-6">
+				<div class="container-profile">
+					<img src="${user.profile}" class="img-profile img img-fluid img-thumbnail" alt="Image preview...">
+					<form:hidden path="profile" value="${profile}" />
+				</div>
 			</div>
 		</div>
-	</div>
+		<div class="row">
+			<div class="col-md-4 text-right">
+				<input type="submit"
+					class="btn btn-primary" value="<c:if test='${user.id == 0}'>Create</c:if>
+					<c:if test='${user.id != 0}'>Update</c:if>"> 
+			</div>
+			<div class="col-md-8 text-left">
+				<a href="createpost" class="btn btn-outline-success">Cancel</a>
+			</div>
+		</div>
+	</form:form>
 </div>
 <jsp:include page="layout/footer.jsp"></jsp:include>
