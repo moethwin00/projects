@@ -1,5 +1,8 @@
 package scm.bulletinboard.system.dao.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -61,16 +64,16 @@ public class UserDAOImpl implements UserDAO {
 	@SuppressWarnings("unchecked")
 	public List<User> getUsersBySearchkeys(String searchName, String searchEmail, String searchCreatedFrom,
 	        String searchCreatedTo) {
-		String hql = "from User as u where u.name LIKE '%" + searchName + "%'";
+		String hql = "from User as u where u.name LIKE '%" + searchName + "%' ";
 		if (searchEmail != "") {
 			hql += "and u.email LIKE '%" + searchEmail + "%'";
 		}
 		if (searchCreatedFrom != "" && searchCreatedTo == "") {
-			hql += "and u.createdAt >= " + searchCreatedFrom;
+			hql += "and u.createdAt >= '" + searchCreatedFrom + "'";
 		} else if (searchCreatedFrom == "" && searchCreatedTo != "") {
-			hql += "and u.createdAt <= " + searchCreatedTo;
+			hql += "and u.createdAt <= '" + searchCreatedTo + "'";
 		} else if (searchCreatedFrom != "" && searchCreatedTo != "") {
-			hql += "and u.createdAt between " + searchCreatedFrom + " and " + searchCreatedTo;
+			hql += "and u.createdAt between '" + searchCreatedFrom + "' and '" + searchCreatedTo + "'";
 		}
 		Query query = sessionFactory.getCurrentSession().createQuery(hql);
 		return query.list();

@@ -9,8 +9,7 @@
 <jsp:include page="layout/menu.jsp"></jsp:include>
 <div class="container post-container">
 	<h5 class="h5 mb-3">
-		<c:if test="${user.id == 0}">Create User Confirmation</c:if>
-		<c:if test="${user.id != 0}">Update User Confirmation</c:if>
+		Create User Confirmation
 	</h5>
 	<form:form method="post" action="insertUser" modelAttribute="user">
 		<div class="row">
@@ -30,7 +29,7 @@
 						<label><span class="align-middle">Email</span></label>
 					</div>
 					<div class="col-md-8">
-						<p>${user.email}</p>
+						<a href="mailto:${user.email}">${user.email}</a>
 						<form:hidden path="email" value="${user.email}"/>
 					</div>
 				</div>
@@ -102,7 +101,7 @@
 					<c:if test='${user.id != 0}'>Update</c:if>"> 
 			</div>
 			<div class="col-md-8 text-left">
-				<a href="createpost" class="btn btn-outline-success">Cancel</a>
+				<a href="createuser" class="btn btn-outline-success">Cancel</a>
 			</div>
 		</div>
 	</form:form>

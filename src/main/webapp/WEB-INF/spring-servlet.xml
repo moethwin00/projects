@@ -18,7 +18,7 @@
 	<!-- Specifying the Resource location to load JS, CSS, Images etc -->
 	<mvc:resources location="/resources/"
 		mapping="/resources/**" />
-	
+		
 	<bean id="messageSource" 
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basenames" value="classpath:messages"></property>

@@ -13,7 +13,6 @@ import scm.bulletinboard.system.validation.password.Confirm;
 import scm.bulletinboard.system.validation.password.Password;
 import scm.bulletinboard.system.validation.phone.Phone;
 
-
 public class UserCreateForm implements Serializable {
 	/**
 	 * 
@@ -32,7 +31,7 @@ public class UserCreateForm implements Serializable {
 	@NotEmpty(message = "*Email address is required")
 	@Email(message = "*Should be email format")
 	String email;
-	
+
 	@Password
 	String password;
 	String confirmPassword;
@@ -43,7 +42,7 @@ public class UserCreateForm implements Serializable {
 	String phone;
 
 	String dob;
-	
+
 	String address;
 	String profile;
 
@@ -130,5 +129,4 @@ public class UserCreateForm implements Serializable {
 	public void setAddress(String address) {
 		this.address = address;
 	}
-
 }

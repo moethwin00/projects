@@ -41,8 +41,8 @@
 			obj.onload = function(data) {
 				document.getElementById("imageData").src = data.target.result;
 				document.getElementById("imageData").value = data.target.result;
+				alert(data.target.result);
 			}
-			alert(this.files[0]);
 			obj.readAsDataURL(this.files[0]);
 		}
 	}
@@ -53,7 +53,7 @@
 	height: 200px;
 	overflow: hidden;
 	margin: 10px;
-	background-position:center center;
+	background-position: center center;
 	position: relative;
 }
 

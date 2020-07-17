@@ -1,17 +1,14 @@
 package scm.bulletinboard.system.controller;
 
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -22,12 +19,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import scm.bulletinboard.system.form.user.UserCreateForm;
 import scm.bulletinboard.system.form.user.UserForm;
-import scm.bulletinboard.system.model.Post;
 import scm.bulletinboard.system.model.User;
 import scm.bulletinboard.system.service.UserService;
 
@@ -133,20 +128,13 @@ public class UserController {
 		}
 
 		UserCreateForm userCreateForm = new UserCreateForm();
-		if (request.getParameter("userEmail") != null) {
-			User existUser = userService.getUserByEmail(request.getParameter("userEmail"));
-			userCreateForm.setId(existUser.getId());
-			userCreateForm.setName(existUser.getName());
-			userCreateForm.setEmail(existUser.getEmail());
-			userCreateForm.setPassword(existUser.getPassword());
-			userCreateForm.setType(Integer.parseInt(existUser.getType()));
-			userCreateForm.setPhone(existUser.getPhone());
-			userCreateForm.setDob(existUser.getDob().toString());
-			userCreateForm.setAddress(existUser.getAddress());
-			userCreateForm.setProfile(existUser.getProfile());
-		}
 		model.addObject("errorMsg", request.getParameter("errorMsg"));
 		model.addObject("name", request.getParameter("name"));
+		model.addObject("email", request.getParameter("email"));
+		model.addObject("type", request.getParameter("type"));
+		model.addObject("phone", request.getParameter("phone"));
+		model.addObject("dob", request.getParameter("dob"));
+		model.addObject("address", request.getParameter("address"));
 		model.addObject("userForm", userCreateForm);
 		model.addObject("pageTitle", "Create User");
 		model.setViewName("createuser");
@@ -166,11 +154,6 @@ public class UserController {
 			if (!userCreateForm.getPassword().equals(userCreateForm.getConfirmPassword())) {
 				model.addObject("passwordMismatchError", messageSource.getMessage("MSG_0005", null, null));
 			}
-			if (userCreateForm.getId() == null) {
-				model.addObject("pageTitle", "Create User");
-			} else {
-				model.addObject("pageTitle", "Update User");
-			}
 			return model;
 		} else {
 			Integer loginUserId = (Integer) request.getSession().getAttribute("loginUserId");
@@ -179,6 +162,7 @@ public class UserController {
 			user.setProfile(imageData);
 			ModelAndView model = new ModelAndView("/confirmuser");
 			model.addObject("user", user);
+			
 			model.addObject("profile", userCreateForm.getProfile());
 			return model;
 
@@ -216,7 +200,8 @@ public class UserController {
 		}
 		user.setName(userCreateForm.getName());
 		user.setEmail(userCreateForm.getEmail());
-		user.setPassword(userCreateForm.getPassword());
+		String hashPass = BCrypt.hashpw(userCreateForm.getPassword(), BCrypt.gensalt(12));
+		user.setPassword(hashPass);
 		user.setType(userCreateForm.getType() + "");
 		user.setPhone(userCreateForm.getPhone());
 		user.setAddress(userCreateForm.getAddress());
@@ -242,15 +227,14 @@ public class UserController {
 		return model;
 	}
 
-	@RequestMapping(value = "userlist/editUser")
-	public ModelAndView editPost(HttpServletRequest request) {
+	@RequestMapping(value = "/userlist/editUser")
+	public ModelAndView editUser(HttpServletRequest request) {
 		int userId = Integer.parseInt(request.getParameter("id"));
 		User user = userService.getUserById(userId);
 		UserCreateForm userCreateForm = new UserCreateForm();
 		userCreateForm.setId(user.getId());
 		userCreateForm.setName(user.getName());
 		userCreateForm.setEmail(user.getEmail());
-		userCreateForm.setPassword(user.getPassword());
 		userCreateForm.setType(Integer.parseInt(user.getType()));
 		userCreateForm.setPhone(user.getPhone());
 		userCreateForm.setDob(user.getDob());
@@ -259,8 +243,7 @@ public class UserController {
 		ModelAndView model = new ModelAndView();
 		model.addObject("userForm", userCreateForm);
 		model.addObject("user", user);
-		model.addObject("pageTitle", "Update Post");
-		model.setViewName("createpost");
+		model.setViewName("updateuser");
 		return model;
 	}
 
@@ -268,7 +251,7 @@ public class UserController {
 	public ModelAndView insert(@ModelAttribute("user") UserCreateForm userCreateForm, HttpSession session, HttpServletRequest request) throws ParseException, IOException {
 		int loginUserId = (Integer) request.getSession().getAttribute("loginUserId");
 		@SuppressWarnings("deprecation")
-		String userProfilePath = request.getRealPath("/") + "/resources/profiles"; 
+		String userProfilePath = request.getRealPath("/") + "\\resources\\profiles"; 
 		
 		User userForCheck = userService.getUserByEmail(userCreateForm.getEmail());
 		ModelAndView model = new ModelAndView();
@@ -276,6 +259,11 @@ public class UserController {
 				model.addObject("errorMsg", messageSource.getMessage("MSG_0006", null, null));
 				model.addObject("userForm", userCreateForm);
 				model.addObject("name", userCreateForm.getName());
+				model.addObject("email", userCreateForm.getEmail());
+				model.addObject("type", userCreateForm.getType());
+				model.addObject("phone", userCreateForm.getPhone());
+				model.addObject("dob", userCreateForm.getDob());
+				model.addObject("address", userCreateForm.getAddress());
 				model.setViewName("redirect:/userlist/createuser");
 
 			} else {

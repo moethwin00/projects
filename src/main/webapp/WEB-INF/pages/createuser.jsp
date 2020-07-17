@@ -7,7 +7,7 @@
 <jsp:include page="layout/header.jsp"></jsp:include>
 <jsp:include page="layout/menu.jsp"></jsp:include>
 <div class="container post-container">
-	<h5 class="h5 mb-3">${pageTitle}</h5>
+	<h5 class="h5 mb-3">Create Users</h5>
 	<form:form method="post" action="confirmuser" modelAttribute="userForm"
 		enctype="multipart/form-data">
 		<form:hidden path="id" />
@@ -38,7 +38,7 @@
 				<label><span>Email Address</span></label>
 			</div>
 			<div class="col-md-4 col-sm-5 col-6">
-				<form:input type="text" path="email" class="form-control" value="${userForm.email}" />
+				<form:input type="text" path="email" class="form-control" value="${email}" />
 			</div>
 			<div class="col-md-6 col-sm-4 col-12">
 				<small><form:errors class="text-danger" path="email" /></small>
@@ -49,7 +49,7 @@
 				<label><span>Password</span></label>
 			</div>
 			<div class="col-md-4 col-sm-5 col-6">
-				<form:input type="password" path="password" class="form-control" value="${userForm.password}"/>
+				<form:input type="password" path="password" class="form-control"/>
 			</div>
 			<div class="col-md-6 col-sm-4 col-12">
 				<small class="text-danger"> <form:errors path="password" />
@@ -71,10 +71,10 @@
 				<label><span>Type</span></label>
 			</div>
 			<div class="col-md-4 col-sm-5 col-6">
-				<form:select path="type" class="form-control">
-					<form:option value="0" selected="<c:if test='${userForm.type == 0}'>true</c:if>">Admin</form:option>
+				<form:select path="type" class="form-control" value="${type}">
+					<form:option value="0">Admin</form:option>
 					
-					<form:option value="1" selected="<c:if test='${userForm.type == 1}'>true</c:if>">User</form:option>
+					<form:option value="1">User</form:option>
 				</form:select>
 			</div>
 			<div class="col-md-6 col-sm-4 col-12">
@@ -86,7 +86,7 @@
 				<label><span>Phone</span></label>
 			</div>
 			<div class="col-md-4 col-sm-5 col-6">
-				<form:input type="text" path="phone" class="form-control" value="${userForm.phone}"/>
+				<form:input type="text" path="phone" class="form-control" value="${phone}"/>
 			</div>
 			<div class="col-md-6 col-sm-4 col-12">
 				<small><form:errors class="text-danger" path="phone" /></small>
@@ -97,7 +97,7 @@
 				<label><span>Date Of Birth</span></label>
 			</div>
 			<div class="col-md-4 col-sm-5 col-6">
-				<form:input type="date" path="dob" class="form-control" value="${userForm.dob}"/>
+				<form:input type="date" path="dob" class="form-control" value="${dob}"/>
 			</div>
 			<div class="col-md-6 col-sm-4 col-12">
 				<small><form:errors class="text-danger" path="dob" /></small>
@@ -108,7 +108,7 @@
 				<label><span>Address</span></label>
 			</div>
 			<div class="col-md-4 col-sm-5 col-6">
-				<form:textarea path="address" class="form-control" value="${userForm.address}"></form:textarea>
+				<form:textarea path="address" class="form-control" value="${address}"></form:textarea>
 			</div>
 			<div class="col-md-6 col-sm-4 col-12">
 				<small><form:errors class="text-danger" path="address" /></small>

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -51,7 +52,8 @@ public class LoginController {
 			return model;
 		} else if (userService.isUserExist(email)) {
 			User user = userService.getUserByEmail(email);
-			if (user.getPassword().equals(loginForm.getPassword())) {
+			String password = loginForm.getPassword();
+			if (BCrypt.checkpw(password, user.getPassword())) {
 				session.setAttribute("LOGIN_USER", user);
 				session.setAttribute("loginUserId", user.getId());
 				session.setAttribute("loginUserName", user.getName());

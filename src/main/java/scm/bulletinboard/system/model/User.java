@@ -61,7 +61,7 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
+	
 	@Column(name = "password")
 	public String getPassword() {
 		return password;

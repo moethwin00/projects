@@ -31,6 +31,7 @@
 						<th>Created Date</th>
 						<th>Updated Date</th>
 						<th></th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -44,6 +45,7 @@
 						<td>${user.address}</td>
 						<td>${user.createdAt}</td>
 						<td>${user.updatedAt}</td>
+						<td><a href="editUser?id=${user.id}">Edit</a></td>
 						<td><a href="#" data-toggle="modal" data-target="#confirmUserModal${user.id}">Delete</a></td>
 					</tr>
 					</c:forEach>

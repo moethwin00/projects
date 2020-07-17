@@ -12,7 +12,7 @@
 			      <a class="nav-link" href="../userlist/">Users</a>
 			    </li>
 			    <li class="nav-item">
-			      <a class="nav-link" href="#">User</a>
+			      <a class="nav-link" href="../userprofile">User</a>
 	   			</li>
 			    <li class="nav-item">
 			      <a class="nav-link" href="../postlist/">Posts</a>
