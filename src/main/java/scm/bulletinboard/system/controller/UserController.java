@@ -250,8 +250,7 @@ public class UserController {
 	@RequestMapping(value = "userlist/insertUser", method = RequestMethod.POST)
 	public ModelAndView insert(@ModelAttribute("user") UserCreateForm userCreateForm, HttpSession session, HttpServletRequest request) throws ParseException, IOException {
 		int loginUserId = (Integer) request.getSession().getAttribute("loginUserId");
-		@SuppressWarnings("deprecation")
-		String userProfilePath = request.getRealPath("/") + "\\resources\\profiles"; 
+		String userProfilePath = request.getServletContext().getRealPath("/") + "resources\\profiles"; 
 		
 		User userForCheck = userService.getUserByEmail(userCreateForm.getEmail());
 		ModelAndView model = new ModelAndView();
@@ -274,6 +273,43 @@ public class UserController {
 			}
 		return model;
 	}
+	
+	@RequestMapping(value = "userlist/confirmUpdateUser", method = RequestMethod.POST)
+	public ModelAndView confirmupdate(@ModelAttribute(value = "userForm") UserCreateForm userCreateForm,  @RequestParam("imageData") String imageData) {
+		ModelAndView model = new ModelAndView("confirmupdateuser");
+		model.addObject("user", userCreateForm);
+		model.addObject("profile", imageData);
+		return model;
+		
+	}
+	
+	@RequestMapping(value = "userlist/updateUser", method = RequestMethod.POST)
+	public ModelAndView updateUserData(@ModelAttribute("user") UserCreateForm userCreateForm, HttpSession session, HttpServletRequest request) throws ParseException, IOException {
+		int loginUserId = (Integer) request.getSession().getAttribute("loginUserId");
+		String userProfilePath = request.getServletContext().getRealPath("/") + "resources\\profiles"; 
+		
+		User userForCheck = userService.getUserByEmail(userCreateForm.getEmail());
+		ModelAndView model = new ModelAndView();
+			if (userForCheck != null && userForCheck.getId() != userCreateForm.getId()) {
+				model.addObject("errorMsg", messageSource.getMessage("MSG_0006", null, null));
+				model.addObject("userForm", userCreateForm);
+				model.addObject("name", userCreateForm.getName());
+				model.addObject("email", userCreateForm.getEmail());
+				model.addObject("type", userCreateForm.getType());
+				model.addObject("phone", userCreateForm.getPhone());
+				model.addObject("dob", userCreateForm.getDob());
+				model.addObject("address", userCreateForm.getAddress());
+				model.setViewName("redirect:/userlist/editUser?id="+userCreateForm.getId());
+
+			} else {
+				userService.updateUser(userCreateForm, loginUserId, userProfilePath);
+				UserForm userForm = new UserForm();
+				model.addObject("userSearch", userForm);
+				model.setViewName("redirect:/userlist/");
+			}
+		return model;
+	}
+	
 }
 
 //	@RequestMapping(value = "postlist/deletePost")

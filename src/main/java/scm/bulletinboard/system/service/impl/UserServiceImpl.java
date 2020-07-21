@@ -67,34 +67,47 @@ public class UserServiceImpl implements UserService {
 		dateFormatter.format(date);
 		return date;
 	}
+	
+	public void uploadProfile(UserCreateForm userForm, int loginUserId, String userProfilePath) throws IOException {
+		String imageBase64 = null;
+		try {
+			imageBase64 = userForm.getProfile();
+			}
+			catch (NullPointerException e) {
+				e.printStackTrace();
+			}
+		if(imageBase64 != null) {
+			if (!imageBase64.isEmpty() && !imageBase64.equals("") && !imageBase64.equals(null)) {
 
-	public User updateUser(User user) {
-		return userDAO.updateUser(user);
+				String[] block = imageBase64.split(",");
+				String realData = block[1];
+
+				byte[] data = Base64.decodeBase64(realData);
+				File imgFile = new File(userProfilePath, userForm.getEmail() + "profile.jpg");
+				System.out.println(imgFile.getAbsolutePath());
+				if(imgFile.exists()) {
+					if(imgFile.delete()) {
+						System.out.print("YES");
+					}
+				}
+				if (!imgFile.exists()) {
+					imgFile.createNewFile();
+				}
+				try (FileOutputStream stream = new FileOutputStream(imgFile)) {
+					stream.write(data);
+					System.out.println(data + "*****");
+				}
+				userForm.setProfile("resources/profiles/" + userForm.getEmail() + "profile.jpg");
+			}
+		}
+		
 	}
 
 	public void insertUser(UserCreateForm userForm, int loginUserId, String userProfilePath)
 	        throws ParseException, IOException {
 		Date currentDate = getDateData();
-		String imageBase64 = userForm.getProfile();
-		if (!imageBase64.isEmpty() && !imageBase64.equals("") && !imageBase64.equals(null)) {
-
-			String[] block = imageBase64.split(",");
-			String realData = block[1];
-
-			byte[] data = Base64.decodeBase64(realData);
-			File imgFile = new File(userProfilePath, userForm.getEmail() + "profile.jpg");
-			System.out.println(imgFile.getAbsolutePath());
-			System.out.println(imgFile.exists());
-			if (!imgFile.exists()) {
-				imgFile.createNewFile();
-			}
-			try (FileOutputStream stream = new FileOutputStream(imgFile)) {
-				stream.write(data);
-				System.out.println(data + "*****");
-			}
-			userForm.setProfile(userProfilePath + userForm.getEmail() + "profile.jpg");
-		}
-
+		
+		uploadProfile(userForm, loginUserId, userProfilePath);
 		String name = userForm.getName();
 		String email = userForm.getEmail();
 		String password = userForm.getPassword();
@@ -111,6 +124,20 @@ public class UserServiceImpl implements UserService {
 		User user = new User(name, email, password, profile, type + "", phone, address, dob, createUserId,
 		        updatedUserId, createdAt, updatedAt);
 		userDAO.addUser(user);
+	}
+
+	@Override
+	public void updateUser(UserCreateForm userCreateForm, int loginUserId, String userProfilePath) throws IOException {
+		Date currentDate = getDateData();
+		uploadProfile(userCreateForm, loginUserId, userProfilePath);
+		int id = userCreateForm.getId();
+		String name = userCreateForm.getName();
+		String email = userCreateForm.getEmail();
+		String type = userCreateForm.getType()+"";
+		String phone = userCreateForm.getPhone();
+		String address = userCreateForm.getAddress();
+		String profile = userCreateForm.getProfile();
+		userDAO.editedUser(id, name, email, type, phone, currentDate, address, profile, loginUserId);
 	}
 
 }

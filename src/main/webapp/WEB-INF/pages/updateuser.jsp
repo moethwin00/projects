@@ -116,12 +116,15 @@
 						<small><form:errors class="text-danger" path="profile" /></small>
 					</div>
 				</div>
+				<div class="row mb-3">
+					<div class="col-md-6 col-sm-4 col-12">
+						<a href="changePassword?id=${userForm.id}">Change Password</a>
+					</div>
+				</div>
 			</div>
 			<div class="col-md-4">
 				<div class="container-profile">
-					<input value="${userForm.profile}" id="up">
- 					<img id="pp" src="" class="img-profile img img-fluid img-thumbnail" alt="Image preview...">
-					<form:hidden path="profile" value="${profile}" />
+ 					<img id="pp" src="../${userForm.profile}" class="img-profile img img-fluid img-thumbnail" alt="Image preview...">
 				</div>
 			</div>
 		</div>

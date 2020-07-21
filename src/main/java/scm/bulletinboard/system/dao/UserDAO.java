@@ -1,5 +1,6 @@
 package scm.bulletinboard.system.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import scm.bulletinboard.system.model.User;
@@ -20,5 +21,6 @@ public interface UserDAO {
 
 	public void addUser(User user);
 
-	public User updateUser(User user);
+	public void editedUser(int id, String name, String email, String type, String phone, Date currentDate, String address,
+	        String profile, int loginUserId);
 }

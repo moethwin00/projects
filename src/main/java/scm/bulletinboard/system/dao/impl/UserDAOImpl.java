@@ -83,9 +83,25 @@ public class UserDAOImpl implements UserDAO {
 		sessionFactory.getCurrentSession().saveOrUpdate(user);
 	}
 
-	public User updateUser(User user) {
-		sessionFactory.getCurrentSession().update(user);
-		return user;
+	@Override
+	public void editedUser(int id, String name, String email, String type, String phone, Date currentDate,
+	        String address, String profile, int loginUserId) {
+		String hql = "update User as u set u.name = :name, u.email = :email, u.type = :type, u.phone = :phone, u.updatedAt = :currentDate, u.address = :address, u.updatedUserId = :currentUser";
+		if(profile != null) {
+			hql += ", u.profile = profile";
+		}
+		hql += " where u.id = :id";
+		Query query = sessionFactory.getCurrentSession().createQuery(hql);
+		query.setInteger("id", id);
+		query.setInteger("currentUser", loginUserId);
+		query.setString("name", name);
+		query.setString("email", email);
+		query.setString("type", type);
+		query.setString("phone", phone);
+		query.setString("address", address);
+		query.setDate("currentDate", currentDate);
+		query.executeUpdate();
+//		return (User) query.uniqueResult();
 	}
 
 }

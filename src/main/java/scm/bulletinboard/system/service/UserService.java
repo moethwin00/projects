@@ -27,6 +27,6 @@ public interface UserService {
 	public Date getDateData();
 	
 	public void insertUser(UserCreateForm userForm, int loginUserId, String profilePath) throws ParseException, IOException;
-	
-	public User updateUser(User user);
+
+	public void updateUser(UserCreateForm userCreateForm, int loginUserId, String userProfilePath) throws IOException;
 }

@@ -41,7 +41,6 @@
 			obj.onload = function(data) {
 				document.getElementById("imageData").src = data.target.result;
 				document.getElementById("imageData").value = data.target.result;
-				alert(data.target.result);
 			}
 			obj.readAsDataURL(this.files[0]);
 		}
