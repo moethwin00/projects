@@ -19,33 +19,61 @@ import org.springframework.web.servlet.ModelAndView;
 import scm.bulletinboard.system.form.post.PostCreateForm;
 import scm.bulletinboard.system.form.post.PostForm;
 import scm.bulletinboard.system.model.Post;
-import scm.bulletinboard.system.model.User;
 import scm.bulletinboard.system.service.PostService;
 import scm.bulletinboard.system.service.UserService;
 
+/**
+ * Controller for Login
+ */
 @Controller
 public class PostController {
 
 	public static final Integer INITIAL_OFFSET = 0;
 
+	/**
+	 * <h2>${Post Service}</h2>
+	 * <p>
+	 * ${Declare Post Service For Using Service Methods}
+	 * </p>
+	 */
 	@Autowired
 	PostService postService;
 
+	/**
+	 * <h2>${User Service}</h2>
+	 * <p>
+	 * ${Declare User Service For Using Service Methods}
+	 * </p>
+	 */
 	@Autowired
 	UserService userService;
 
+	/**
+	 * <h2>${Post Service Error Message}</h2>
+	 * <p>
+	 * ${Declare MessageSource For Accessing Messages From Property Resource File}
+	 * </p>
+	 */
 	@Autowired
 	MessageSource messageSource;
 
+	/**
+	 * <h2>${Get Post List}</h2>
+	 * <p>
+	 * ${Go To postlist Route, Show Post List Page}
+	 * </p>
+	 */
 	@RequestMapping(value = "postlist", method = RequestMethod.GET)
 	public ModelAndView showPosts(ModelAndView model) {
-//		System.out.println(request.getParameter("q"));
 		PostForm postForm = new PostForm();
 		List<Post> postList;
 		int postCount;
 		postList = postService.getAllPosts();
 		postCount = postService.getPostCount();
 		int paginationCount = postCount / 7;
+		if(paginationCount != 0) {
+			++paginationCount;
+		}
 		model.addObject("postLists", postList);
 		model.addObject("title", postForm.getTitle());
 		model.addObject("postSearch", postForm);
@@ -55,6 +83,12 @@ public class PostController {
 		return model;
 	}
 
+	/**
+	 * <h2>${Get Post List By Pagination Number}</h2>
+	 * <p>
+	 * ${Go To postlist Route, Show Post List Page By Pagination Number}
+	 * </p>
+	 */
 	@RequestMapping(value = "postlist/{pageId}", method = RequestMethod.GET)
 	public ModelAndView showPosts(@PathVariable int pageId, ModelAndView model) {
 		PostForm postForm = new PostForm();
@@ -68,6 +102,9 @@ public class PostController {
 		List<Post> postList = postService.getPostsByPageId(pageId, total);
 		int postCount = postService.getPostCount();
 		int paginationCount = postCount / 7;
+		if(paginationCount != 0) {
+			++paginationCount;
+		}
 		model.addObject("postSearch", postForm);
 		model.addObject("postLists", postList);
 		model.addObject("paginationCount", paginationCount);
@@ -76,6 +113,12 @@ public class PostController {
 		return model;
 	}
 
+	/**
+	 * <h2>${Calling Post List Route By Search Keys}</h2>
+	 * <p>
+	 * ${Go To postlist Route, Show Posts List Page By Search Keys}
+	 * </p>
+	 */
 	@RequestMapping(value = "postlist/searchPosts", method = { RequestMethod.POST })
 	public ModelAndView searchPosts(@ModelAttribute("postSearch") PostForm postForm, HttpSession session)
 	        throws ParseException {
@@ -89,6 +132,12 @@ public class PostController {
 		}
 	}
 
+	/**
+	 * <h2>${Process For Post Searching}</h2>
+	 * <p>
+	 * ${Process For Post Searching}
+	 * </p>
+	 */
 	private void doSearchProcess(ModelAndView view, int offset, Boolean resultSearch, PostForm postForm)
 	        throws ParseException {
 		String search = postForm.getTitle();
@@ -105,6 +154,12 @@ public class PostController {
 		view.addObject("count", count);
 	}
 
+	/**
+	 * <h2>${Create Post}</h2>
+	 * <p>
+	 * ${Go To createpost Route, Show Post Creation Form Page}
+	 * </p>
+	 */
 	@RequestMapping(value = "postlist/createpost", method = RequestMethod.GET)
 	public ModelAndView createpost(ModelAndView model, HttpSession session, HttpServletRequest request) {
 		if (session.getAttribute("LOGIN_USER") == null) {
@@ -123,6 +178,12 @@ public class PostController {
 		return model;
 	}
 
+	/**
+	 * <h2>${Go To Post Create Confirmation}</h2>
+	 * <p>
+	 * ${Go To confirmpost Route And Show Confirm Post Page}
+	 * </p>
+	 */
 	@RequestMapping(value = "/postlist/confirmpost", method = RequestMethod.POST)
 	public ModelAndView savePost(@Validated @ModelAttribute(value = "postForm") PostCreateForm postCreateForm,
 	        BindingResult result, HttpSession httpSession, HttpServletRequest request, HttpServletResponse response) {
@@ -137,44 +198,19 @@ public class PostController {
 		} else {
 			Integer loginUserId = (Integer) request.getSession().getAttribute("loginUserId");
 			Date date = userService.getDateData();
-			Post post = addNewPost(postCreateForm, loginUserId, date);
+			Post post = postService.addNewPost(postCreateForm, loginUserId, date);
 			ModelAndView model = new ModelAndView("/confirmpost");
 			model.addObject("post", post);
 			return model;
 		}
 	}
 
-	private Post addNewPost(PostCreateForm postCreateForm, Integer loginUserId, Date date) {
-		Post post = new Post();
-		if (postCreateForm.getId() != null) {
-			Post oldPost = postService.getPostById(postCreateForm.getId());
-			post.setId(postCreateForm.getId());
-			post.setCreatedAt(oldPost.getCreatedAt());
-			User oldUser = oldPost.getUser();
-			post.setUser(oldUser);
-			User user = userService.getUserById(loginUserId);
-			post.setUser2(user);
-			if (!postCreateForm.isActive()) {
-				post.setStatus(0);
-			}
-			if (postCreateForm.isActive()) {
-				System.out.println(postCreateForm.isActive());
-				post.setStatus(1);
-			}
-			post.setUpdatedAt(date);
-		} else {
-			post.setCreatedAt(date);
-			post.setUpdatedAt(date);
-			User user = userService.getUserById(loginUserId);
-			post.setUser(user);
-			post.setUser2(user);
-			post.setStatus(1);
-		}
-		post.setTitle(postCreateForm.getTitle());
-		post.setDescription(postCreateForm.getDescription());
-		return post;
-	}
-
+	/**
+	 * <h2>${Confirm Post}</h2>
+	 * <p>
+	 * ${Go To confirmpost Route and Create Posts}
+	 * </p>
+	 */
 	@RequestMapping(value = "/postlist/confirmpost", method = RequestMethod.GET)
 	public ModelAndView confirmPost(@Validated @ModelAttribute(value = "post") Post post, HttpServletRequest request,
 	        HttpSession session) {
@@ -194,22 +230,18 @@ public class PostController {
 		return model;
 	}
 
+	/**
+	 * <h2>${Editing Post}</h2>
+	 * <p>
+	 * ${Go To editPost Route, Show Post Creation Form Page To Edit}
+	 * </p>
+	 */
 	@RequestMapping(value = "postlist/editPost")
 	public ModelAndView editPost(HttpServletRequest request) {
 		int postId = Integer.parseInt(request.getParameter("id"));
 		Post post = postService.getPostById(postId);
-		PostCreateForm postCreateForm = new PostCreateForm();
-		postCreateForm.setId(post.getId());
-		postCreateForm.setTitle(post.getTitle());
-		postCreateForm.setDescription(post.getDescription());
-		boolean active = (post.getStatus() == 1) ? true : false;
-		postCreateForm.setActive(active);
 		ModelAndView model = new ModelAndView();
-		if (request.getParameter("postTitle") != null) {
-			postCreateForm.setTitle(request.getParameter("postTitle"));
-			postCreateForm.setDescription(request.getParameter("postDescription"));
-			postCreateForm.setStatus(Integer.parseInt(request.getParameter("postStatus")));
-		}
+		PostCreateForm postCreateForm = postService.setDataToPostCreateForm(post, request);
 		model.addObject("errorMsg", request.getParameter("errorMsg"));
 		model.addObject("postForm", postCreateForm);
 		model.addObject("post", post);
@@ -218,6 +250,12 @@ public class PostController {
 		return model;
 	}
 
+	/**
+	 * <h2>${Save Post By Editing Or Creation}</h2>
+	 * <p>
+	 * ${Go To savePost Route And Post Save to Database And Go To Post List Page}
+	 * </p>
+	 */
 	@RequestMapping(value = "postlist/savePost/{id}/{title}/{description}/{status}", method = RequestMethod.GET)
 	public ModelAndView savePost(@PathVariable("id") int id, @PathVariable("title") String title,
 	        @PathVariable("description") String description, @PathVariable("status") int status, HttpSession session,
@@ -232,7 +270,7 @@ public class PostController {
 		postCreateForm.setActive(active);
 		Integer loginUserId = (Integer) request.getSession().getAttribute("loginUserId");
 		Date date = userService.getDateData();
-		Post post = addNewPost(postCreateForm, loginUserId, date);
+		Post post = postService.addNewPost(postCreateForm, loginUserId, date);
 		ModelAndView model = new ModelAndView();
 		if (id == 0) {
 			Post postForCheck = postService.getPostsByTitle(title);
@@ -269,6 +307,12 @@ public class PostController {
 
 	}
 
+	/**
+	 * <h2>${Soft Deleting Post}</h2>
+	 * <p>
+	 * ${Go To deletePost Route}
+	 * </p>
+	 */
 	@RequestMapping(value = "postlist/deletePost")
 	public ModelAndView softDelete(ModelAndView model, HttpServletRequest request, HttpSession session) {
 		int userId = (Integer) request.getSession().getAttribute("loginUserId");
@@ -278,6 +322,12 @@ public class PostController {
 		return model;
 	}
 
+	/**
+	 * <h2>${Search and Delete Posts}</h2>
+	 * <p>
+	 * ${Go To searchDeleteRoute Route}
+	 * </p>
+	 */
 	@RequestMapping(value = "postlist/searchDeletePost")
 	public ModelAndView softSearchDelete(ModelAndView model, HttpServletRequest request, HttpSession session)
 	        throws ParseException {
@@ -290,6 +340,14 @@ public class PostController {
 		return model;
 	}
 
+	/**
+	 * <h2>${Redirecting Post List Page}</h2>
+	 * <p>
+	 * ${Redirecting Post List}
+	 * </p>
+	 * 
+	 * @param${model, request}
+	 */
 	private void redirectPostList(ModelAndView model, HttpServletRequest request) {
 		PostForm postForm = new PostForm();
 		model.addObject("postSearch", postForm);
@@ -298,6 +356,14 @@ public class PostController {
 		model.setViewName("redirect:" + referer);
 	}
 
+	/**
+	 * <h2>${Redirecting Post Create Page}</h2>
+	 * <p>
+	 * ${Redirecting Post Create Page with Error Message}
+	 * </p>
+	 * 
+	 * @param${model, request}
+	 */
 	private ModelAndView redirectErrorView(Post post) {
 		ModelAndView model = new ModelAndView();
 		model.addObject("errorMsg", messageSource.getMessage("MSG_0002", null, null));

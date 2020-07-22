@@ -2,8 +2,6 @@ package scm.bulletinboard.system.dao;
 
 import java.util.Date;
 import java.util.List;
-
-import scm.bulletinboard.system.form.post.PostCreateForm;
 import scm.bulletinboard.system.model.Post;
 
 public interface PostDAO {

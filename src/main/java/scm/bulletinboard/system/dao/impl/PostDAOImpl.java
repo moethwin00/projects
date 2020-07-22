@@ -2,15 +2,11 @@ package scm.bulletinboard.system.dao.impl;
 
 import java.util.Date;
 import java.util.List;
-
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-
 import scm.bulletinboard.system.dao.PostDAO;
-import scm.bulletinboard.system.form.post.PostCreateForm;
 import scm.bulletinboard.system.model.Post;
 
 @Repository

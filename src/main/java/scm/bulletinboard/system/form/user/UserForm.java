@@ -1,7 +1,6 @@
 package scm.bulletinboard.system.form.user;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class UserForm implements Serializable {
 

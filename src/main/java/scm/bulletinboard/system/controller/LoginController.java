@@ -25,15 +25,36 @@ import scm.bulletinboard.system.form.post.PostForm;
 import scm.bulletinboard.system.model.User;
 import scm.bulletinboard.system.service.UserService;
 
+/**
+ * Controller for Login
+ */
 @Controller
 public class LoginController {
 
+	/**
+	 * <h2>${Login Service}</h2>
+	 * <p>
+	 * ${Declare User Service For Using Service Methods}
+	 * </p>
+	 */
 	@Autowired
 	UserService userService;
 
+	/**
+	 * <h2>${Login Service Error Message}</h2>
+	 * <p>
+	 * ${Declare MessageSource For Accessing Messages From Property Resource File}
+	 * </p>
+	 */
 	@Autowired
 	private MessageSource messageSource;
 
+	/**
+	 * <h2>${Start Route Calling}</h2>
+	 * <p>
+	 * ${Go To login Route, Show Login Page}
+	 * </p>
+	 */
 	@RequestMapping(value = "login", method = RequestMethod.GET)
 	public ModelAndView showLoginForm(ModelAndView model) {
 		LoginForm loginForm = new LoginForm();
@@ -42,11 +63,16 @@ public class LoginController {
 		return model;
 	}
 
+	/**
+	 * <h2>${Get Login Data(Email, Password)}</h2>
+	 * <p>
+	 * ${Get Login Data(Email, Password) And Go To Post List}
+	 * </p>
+	 */
 	@RequestMapping(value = "checkLogin", method = RequestMethod.POST)
 	public ModelAndView checkLogin(@Validated @ModelAttribute LoginForm loginForm, BindingResult result,
 	        HttpSession session) {
 		String email = loginForm.getEmail();
-		System.out.println(userService.isUserExist(email));
 		if (result.hasErrors()) {
 			ModelAndView model = new ModelAndView("login");
 			return model;
@@ -76,14 +102,21 @@ public class LoginController {
 		}
 	}
 
+	/**
+	 * <h2>${User Account Logout}</h2>
+	 * <p>
+	 * ${User Account Logging Out And Go To Login Page}
+	 * </p>
+	 */
 	@RequestMapping(value = "logout", method = RequestMethod.GET)
-	public ModelAndView logout(Model model, HttpSession session, HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+	public ModelAndView logout(Model model, HttpSession session, HttpServletRequest req, HttpServletResponse resp)
+	        throws IOException, ServletException {
 		resp.setDateHeader("Expires", 0);
-        resp.setHeader("Last-Modified", new Date().toString());
-        resp.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0");
-        resp.setHeader("Pragma", "no-cache");
-        resp.setHeader("X-Content-Type-Options", "nosniff");
-        resp.setHeader("X-Frame-Options", "DENY");
+		resp.setHeader("Last-Modified", new Date().toString());
+		resp.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0");
+		resp.setHeader("Pragma", "no-cache");
+		resp.setHeader("X-Content-Type-Options", "nosniff");
+		resp.setHeader("X-Frame-Options", "DENY");
 		session.removeAttribute("loginUserName");
 		session.invalidate();
 		ModelAndView loginView = new ModelAndView("redirect:/login");

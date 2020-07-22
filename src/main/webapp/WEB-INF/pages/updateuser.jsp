@@ -118,7 +118,7 @@
 				</div>
 				<div class="row mb-3">
 					<div class="col-md-6 col-sm-4 col-12">
-						<a href="changePassword?id=${userForm.id}">Change Password</a>
+						<a href="changepassword?id=${userForm.id}">Change Password</a>
 					</div>
 				</div>
 			</div>

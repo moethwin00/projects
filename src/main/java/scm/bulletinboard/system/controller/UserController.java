@@ -7,8 +7,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -26,16 +24,38 @@ import scm.bulletinboard.system.form.user.UserForm;
 import scm.bulletinboard.system.model.User;
 import scm.bulletinboard.system.service.UserService;
 
+/**
+ * Controller for Login
+ */
 @Controller
 public class UserController {
+
 	public static final Integer INITIAL_OFFSET01 = 0;
 
+	/**
+	 * <h2>${User Service}</h2>
+	 * <p>
+	 * ${Declare User Service For Using Service Methods}
+	 * </p>
+	 */
 	@Autowired
 	UserService userService;
 
+	/**
+	 * <h2>${User Service Error Message}</h2>
+	 * <p>
+	 * ${Declare MessageSource For Accessing Messages From Property Resource File}
+	 * </p>
+	 */
 	@Autowired
 	MessageSource messageSource;
 
+	/**
+	 * <h2>${Get User List}</h2>
+	 * <p>
+	 * ${Go To userlist Route, Show User List Page}
+	 * </p>
+	 */
 	@RequestMapping(value = "/userlist", method = RequestMethod.GET)
 	public ModelAndView showUsers(ModelAndView model, HttpSession session) {
 		if (session.getAttribute("LOGIN_USER") == null) {
@@ -47,6 +67,9 @@ public class UserController {
 		userList = userService.getAllUsers();
 		userCount = userService.getUserCount();
 		int paginationCount = userCount / 7;
+		if(paginationCount != 0) {
+			++paginationCount;
+		}
 		model.addObject("userLists", userList);
 		model.addObject("userSearch", userForm);
 		model.addObject("paginationCount", paginationCount);
@@ -55,6 +78,12 @@ public class UserController {
 		return model;
 	}
 
+	/**
+	 * <h2>${Get User List By Pagination Number}</h2>
+	 * <p>
+	 * ${Go To userlist Route, Show User List Page By Pagination Number}
+	 * </p>
+	 */
 	@RequestMapping(value = "userlist/{pageId}", method = RequestMethod.GET)
 	public ModelAndView showUsers(@PathVariable int pageId, ModelAndView model, HttpSession session) {
 		if (session.getAttribute("LOGIN_USER") == null) {
@@ -71,6 +100,9 @@ public class UserController {
 		List<User> userList = userService.getUserByPageId(pageId, total);
 		int userCount = userService.getUserCount();
 		int paginationCount = userCount / 7;
+		if(paginationCount != 0) {
+			++paginationCount;
+		}
 		model.addObject("userSearch", userForm);
 		model.addObject("userLists", userList);
 		model.addObject("paginationCount", paginationCount);
@@ -79,6 +111,12 @@ public class UserController {
 		return model;
 	}
 
+	/**
+	 * <h2>${Calling User List Route By Search Keys}</h2>
+	 * <p>
+	 * ${Go To userlist Route, Show Users List Page By Search Keys}
+	 * </p>
+	 */
 	@RequestMapping(value = "userlist/searchUsers", method = { RequestMethod.POST })
 	public ModelAndView searchUsers(@ModelAttribute("uerSearch") UserForm userForm, HttpSession session)
 	        throws ParseException {
@@ -96,6 +134,12 @@ public class UserController {
 		}
 	}
 
+	/**
+	 * <h2>${Process For User Searching}</h2>
+	 * <p>
+	 * ${Process For User Searching}
+	 * </p>
+	 */
 	private void doSearchUserProcess(ModelAndView view, int offset, Boolean resultSearch, UserForm userForm)
 	        throws ParseException {
 		String searchName = userForm.getName();
@@ -120,13 +164,18 @@ public class UserController {
 		view.addObject("userCount", count);
 	}
 
-//
+
+	/**
+	 * <h2>${Create User}</h2>
+	 * <p>
+	 * ${Go To createuser Route, Show User Creation Form Page}
+	 * </p>
+	 */
 	@RequestMapping(value = "userlist/createuser", method = RequestMethod.GET)
 	public ModelAndView createuser(ModelAndView model, HttpSession session, HttpServletRequest request) {
 		if (session.getAttribute("LOGIN_USER") == null) {
 			return new ModelAndView("redirect:/login");
 		}
-
 		UserCreateForm userCreateForm = new UserCreateForm();
 		model.addObject("errorMsg", request.getParameter("errorMsg"));
 		model.addObject("name", request.getParameter("name"));
@@ -141,7 +190,12 @@ public class UserController {
 		return model;
 	}
 
-//
+	/**
+	 * <h2>${Go To User Create Confirmation}</h2>
+	 * <p>
+	 * ${Go To confirmuser Route And Show Confirm User Page}
+	 * </p>
+	 */
 	@RequestMapping(value = "/userlist/confirmuser", method = RequestMethod.POST)
 	public ModelAndView saveUser(@Validated @ModelAttribute(value = "userForm") UserCreateForm userCreateForm,
 	        BindingResult result, HttpSession session, HttpServletRequest request, HttpServletResponse response,
@@ -158,58 +212,22 @@ public class UserController {
 		} else {
 			Integer loginUserId = (Integer) request.getSession().getAttribute("loginUserId");
 			Date date = userService.getDateData();
-			User user = addNewUser(userCreateForm, loginUserId, date);
+			User user = userService.addNewUser(userCreateForm, loginUserId, date);
 			user.setProfile(imageData);
 			ModelAndView model = new ModelAndView("/confirmuser");
 			model.addObject("user", user);
-			
+
 			model.addObject("profile", userCreateForm.getProfile());
 			return model;
-
-//			String path=session.getServletContext().getRealPath("/");  
-//		    String filename=file.getOriginalFilename();  
-//		    System.out.println(path+" "+filename);  
-//		    try{  
-//		        byte barr[]=file.getBytes();  
-//		          
-//		        BufferedOutputStream bout=new BufferedOutputStream(  
-//		                 new FileOutputStream(path+"/"+filename));  
-//		        bout.write(barr);  
-//		        bout.flush();  
-//		        bout.close();  
-//		          
-//		        }catch(Exception e){System.out.println(e);}  
-//			return new ModelAndView();
 		}
 	}
 
-	private User addNewUser(UserCreateForm userCreateForm, Integer loginUserId, Date date) throws ParseException {
-		User user = new User();
-		if (userCreateForm.getId() != null) {
-			User oldUser = userService.getUserById(userCreateForm.getId());
-			user.setId(userCreateForm.getId());
-			user.setCreatedAt(oldUser.getCreatedAt());
-			user.setCreateUserId(oldUser.getCreateUserId());
-			user.setUpdatedUserId(loginUserId);
-			user.setUpdatedAt(date);
-		} else {
-			user.setCreatedAt(date);
-			user.setUpdatedAt(date);
-			user.setUpdatedUserId(loginUserId);
-			user.setCreateUserId(loginUserId);
-		}
-		user.setName(userCreateForm.getName());
-		user.setEmail(userCreateForm.getEmail());
-		String hashPass = BCrypt.hashpw(userCreateForm.getPassword(), BCrypt.gensalt(12));
-		user.setPassword(hashPass);
-		user.setType(userCreateForm.getType() + "");
-		user.setPhone(userCreateForm.getPhone());
-		user.setAddress(userCreateForm.getAddress());
-		user.setDob(userCreateForm.getDob());
-//		user.setProfile(userCreateForm.getProfile());
-		return user;
-	}
-
+	/**
+	 * <h2>${Confirm User}</h2>
+	 * <p>
+	 * ${Go To confirmuser Route and Create Users}
+	 * </p>
+	 */
 	@RequestMapping(value = "/userlist/confirmuser", method = RequestMethod.GET)
 	public ModelAndView confirmUser(@Validated @ModelAttribute(value = "user") User user, HttpServletRequest request,
 	        HttpSession session) {
@@ -219,7 +237,6 @@ public class UserController {
 			User existUser = userService.getUserByEmail(request.getParameter("email"));
 			model.addObject("user", existUser);
 		}
-
 		model.addObject("pageTitle", "Create Post Confirmation");
 		model.addObject("btnText", "Create");
 		model.addObject("user", user);
@@ -227,19 +244,17 @@ public class UserController {
 		return model;
 	}
 
+	/**
+	 * <h2>${Editing User}</h2>
+	 * <p>
+	 * ${Go To editUser Route, Show User Creation Form Page To Edit}
+	 * </p>
+	 */
 	@RequestMapping(value = "/userlist/editUser")
 	public ModelAndView editUser(HttpServletRequest request) {
 		int userId = Integer.parseInt(request.getParameter("id"));
 		User user = userService.getUserById(userId);
-		UserCreateForm userCreateForm = new UserCreateForm();
-		userCreateForm.setId(user.getId());
-		userCreateForm.setName(user.getName());
-		userCreateForm.setEmail(user.getEmail());
-		userCreateForm.setType(Integer.parseInt(user.getType()));
-		userCreateForm.setPhone(user.getPhone());
-		userCreateForm.setDob(user.getDob());
-		userCreateForm.setAddress(user.getAddress());
-		userCreateForm.setProfile(user.getProfile());
+		UserCreateForm userCreateForm = userService.setDataToUserCreateForm(user);
 		ModelAndView model = new ModelAndView();
 		model.addObject("userForm", userCreateForm);
 		model.addObject("user", user);
@@ -247,69 +262,90 @@ public class UserController {
 		return model;
 	}
 
+	/**
+	 * <h2>${Save User By Editing Or Creation}</h2>
+	 * <p>
+	 * ${Go To insertUser Route And User Save to Database And Go To Post List Page}
+	 * </p>
+	 */
 	@RequestMapping(value = "userlist/insertUser", method = RequestMethod.POST)
-	public ModelAndView insert(@ModelAttribute("user") UserCreateForm userCreateForm, HttpSession session, HttpServletRequest request) throws ParseException, IOException {
+	public ModelAndView insert(@ModelAttribute("user") UserCreateForm userCreateForm, HttpSession session,
+	        HttpServletRequest request) throws ParseException, IOException {
 		int loginUserId = (Integer) request.getSession().getAttribute("loginUserId");
-		String userProfilePath = request.getServletContext().getRealPath("/") + "resources\\profiles"; 
-		
+		String userProfilePath = request.getServletContext().getRealPath("/") + "resources\\profiles";
+
 		User userForCheck = userService.getUserByEmail(userCreateForm.getEmail());
 		ModelAndView model = new ModelAndView();
-			if (userForCheck != null) {
-				model.addObject("errorMsg", messageSource.getMessage("MSG_0006", null, null));
-				model.addObject("userForm", userCreateForm);
-				model.addObject("name", userCreateForm.getName());
-				model.addObject("email", userCreateForm.getEmail());
-				model.addObject("type", userCreateForm.getType());
-				model.addObject("phone", userCreateForm.getPhone());
-				model.addObject("dob", userCreateForm.getDob());
-				model.addObject("address", userCreateForm.getAddress());
-				model.setViewName("redirect:/userlist/createuser");
+		if (userForCheck != null) {
+			model.addObject("errorMsg", messageSource.getMessage("MSG_0006", null, null));
+			model.addObject("userForm", userCreateForm);
+			model.addObject("name", userCreateForm.getName());
+			model.addObject("email", userCreateForm.getEmail());
+			model.addObject("type", userCreateForm.getType());
+			model.addObject("phone", userCreateForm.getPhone());
+			model.addObject("dob", userCreateForm.getDob());
+			model.addObject("address", userCreateForm.getAddress());
+			model.setViewName("redirect:/userlist/createuser");
 
-			} else {
-				userService.insertUser(userCreateForm, loginUserId, userProfilePath);
-				UserForm userForm = new UserForm();
-				model.addObject("userSearch", userForm);
-				model.setViewName("redirect:/userlist/");
-			}
+		} else {
+			userService.insertUser(userCreateForm, loginUserId, userProfilePath);
+			UserForm userForm = new UserForm();
+			model.addObject("userSearch", userForm);
+			model.setViewName("redirect:/userlist/");
+		}
 		return model;
 	}
-	
+
+	/**
+	 * <h2>${Confirm Update User}</h2>
+	 * <p>
+	 * ${Go To confirmUpdateUser Route and Show Update User Confirmation Page}
+	 * </p>
+	 */
 	@RequestMapping(value = "userlist/confirmUpdateUser", method = RequestMethod.POST)
-	public ModelAndView confirmupdate(@ModelAttribute(value = "userForm") UserCreateForm userCreateForm,  @RequestParam("imageData") String imageData) {
+	public ModelAndView confirmupdate(@ModelAttribute(value = "userForm") UserCreateForm userCreateForm,
+	        @RequestParam("imageData") String imageData) {
 		ModelAndView model = new ModelAndView("confirmupdateuser");
 		model.addObject("user", userCreateForm);
 		model.addObject("profile", imageData);
 		return model;
-		
+
 	}
-	
+
+	/**
+	 * <h2>${Update User}</h2>
+	 * <p>
+	 * ${Go To updateUser Route and User Updating}
+	 * </p>
+	 */
 	@RequestMapping(value = "userlist/updateUser", method = RequestMethod.POST)
-	public ModelAndView updateUserData(@ModelAttribute("user") UserCreateForm userCreateForm, HttpSession session, HttpServletRequest request) throws ParseException, IOException {
+	public ModelAndView updateUserData(@ModelAttribute("user") UserCreateForm userCreateForm, HttpSession session,
+	        HttpServletRequest request) throws ParseException, IOException {
 		int loginUserId = (Integer) request.getSession().getAttribute("loginUserId");
-		String userProfilePath = request.getServletContext().getRealPath("/") + "resources\\profiles"; 
-		
+		String userProfilePath = request.getServletContext().getRealPath("/") + "resources\\profiles";
+
 		User userForCheck = userService.getUserByEmail(userCreateForm.getEmail());
 		ModelAndView model = new ModelAndView();
-			if (userForCheck != null && userForCheck.getId() != userCreateForm.getId()) {
-				model.addObject("errorMsg", messageSource.getMessage("MSG_0006", null, null));
-				model.addObject("userForm", userCreateForm);
-				model.addObject("name", userCreateForm.getName());
-				model.addObject("email", userCreateForm.getEmail());
-				model.addObject("type", userCreateForm.getType());
-				model.addObject("phone", userCreateForm.getPhone());
-				model.addObject("dob", userCreateForm.getDob());
-				model.addObject("address", userCreateForm.getAddress());
-				model.setViewName("redirect:/userlist/editUser?id="+userCreateForm.getId());
+		if (userForCheck != null && userForCheck.getId() != userCreateForm.getId()) {
+			model.addObject("errorMsg", messageSource.getMessage("MSG_0006", null, null));
+			model.addObject("userForm", userCreateForm);
+			model.addObject("name", userCreateForm.getName());
+			model.addObject("email", userCreateForm.getEmail());
+			model.addObject("type", userCreateForm.getType());
+			model.addObject("phone", userCreateForm.getPhone());
+			model.addObject("dob", userCreateForm.getDob());
+			model.addObject("address", userCreateForm.getAddress());
+			model.setViewName("redirect:/userlist/editUser?id=" + userCreateForm.getId());
 
-			} else {
-				userService.updateUser(userCreateForm, loginUserId, userProfilePath);
-				UserForm userForm = new UserForm();
-				model.addObject("userSearch", userForm);
-				model.setViewName("redirect:/userlist/");
-			}
+		} else {
+			userService.updateUser(userCreateForm, loginUserId, userProfilePath);
+			UserForm userForm = new UserForm();
+			model.addObject("userSearch", userForm);
+			model.setViewName("redirect:/userlist/");
+		}
 		return model;
 	}
-	
+
 }
 
 //	@RequestMapping(value = "postlist/deletePost")

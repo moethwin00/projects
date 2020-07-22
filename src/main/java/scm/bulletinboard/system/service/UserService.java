@@ -8,6 +8,12 @@ import java.util.List;
 import scm.bulletinboard.system.form.user.UserCreateForm;
 import scm.bulletinboard.system.model.User;
 
+/**
+ * <h2>Interface for ${User Service Implementation}</h2>
+ * <p>
+ * Interface for ${User Service Implementation}
+ * </p>
+ */
 public interface UserService {
 	public boolean isUserExist(String email);
 
@@ -23,10 +29,17 @@ public interface UserService {
 
 	public List<User> getUsersBySearchkeys(String searchName, String searchEmail, String searchCreatedFrom,
 	        String searchCreatedTo);
-	
+
 	public Date getDateData();
-	
-	public void insertUser(UserCreateForm userForm, int loginUserId, String profilePath) throws ParseException, IOException;
+
+	public void insertUser(UserCreateForm userForm, int loginUserId, String profilePath)
+	        throws ParseException, IOException;
 
 	public void updateUser(UserCreateForm userCreateForm, int loginUserId, String userProfilePath) throws IOException;
+
+	public User addNewUser(UserCreateForm userCreateForm, Integer loginUserId, Date date) throws ParseException;
+
+	public UserCreateForm setDataToUserCreateForm(User user);
+
+	public void updatePassword(int id, String newPassword);
 }

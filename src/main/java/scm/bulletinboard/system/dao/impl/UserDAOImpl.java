@@ -1,15 +1,11 @@
 package scm.bulletinboard.system.dao.impl;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import scm.bulletinboard.system.dao.UserDAO;
 import scm.bulletinboard.system.model.User;
 
@@ -101,7 +97,15 @@ public class UserDAOImpl implements UserDAO {
 		query.setString("address", address);
 		query.setDate("currentDate", currentDate);
 		query.executeUpdate();
-//		return (User) query.uniqueResult();
+	}
+
+	@Override
+	public void updatePassword(int id, String newPassword) {
+		String hql = "update User as u set u.password = :password where u.id = :id";
+		Query query = sessionFactory.getCurrentSession().createQuery(hql);
+		query.setString("password", newPassword);
+		query.setInteger("id", id);
+		query.executeUpdate();
 	}
 
 }

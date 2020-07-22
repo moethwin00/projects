@@ -1,15 +1,8 @@
 package scm.bulletinboard.system.form.user;
 
 import java.io.Serializable;
-import java.util.Date;
-
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Past;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
-
-import scm.bulletinboard.system.validation.password.Confirm;
 import scm.bulletinboard.system.validation.password.Password;
 import scm.bulletinboard.system.validation.phone.Phone;
 

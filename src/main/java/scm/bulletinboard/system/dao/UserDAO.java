@@ -23,4 +23,6 @@ public interface UserDAO {
 
 	public void editedUser(int id, String name, String email, String type, String phone, Date currentDate, String address,
 	        String profile, int loginUserId);
+
+	public void updatePassword(int id, String newPassword);
 }
