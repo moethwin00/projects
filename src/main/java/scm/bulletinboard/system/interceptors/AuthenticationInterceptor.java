@@ -10,8 +10,8 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 		if (request.getSession().getAttribute("LOGIN_USER") == null) {
-			response.sendRedirect(request.getContextPath() + "/showLogin");
-			return false;
+//			response.sendRedirect("login");
+		return true;
 		} else {
 			return true;
 		}

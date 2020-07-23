@@ -3,7 +3,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 
 <!DOCTYPE html>
 <html>
@@ -65,6 +64,20 @@
 	right: -100%;
 	top: -100%;
 	bottom: -100%;
+}
+
+fieldset.scheduler-border {
+	border: 1px groove #ddd !important;
+	padding: 0 1.4em 1.4em 1.4em !important;
+	margin: 0 0 1.5em 0 !important;
+	-webkit-box-shadow: 0px 0px 0px 0px #000;
+	box-shadow: 0px 0px 0px 0px #000;
+}
+
+legend.scheduler-border {
+	font-size: 1.2em !important;
+	font-weight: bold !important;
+	text-align: left !important;
 }
 </style>
 </head>

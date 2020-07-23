@@ -9,7 +9,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import scm.bulletinboard.system.form.login.LoginForm;
+import scm.bulletinboard.system.form.login.LoginForm;;
 
 @PropertySource("classpath:application.properties")
 @Component
@@ -20,7 +20,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
 
     private static final long MAX_INACTIVE_SESSION_TIME = 50 * 10000;
 
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+    public boolean postHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
 
         LoginForm loginUser = (LoginForm) request.getSession().getAttribute("LOGIN_USER");
@@ -31,6 +31,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
         }
 
         char loginUserType = loginUser.getType();
+        System.out.println(loginUserType);
         if (loginUserType == '0') {
             
             return true;

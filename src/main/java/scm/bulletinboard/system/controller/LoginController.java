@@ -1,6 +1,7 @@
 package scm.bulletinboard.system.controller;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Date;
 
 import javax.servlet.ServletException;
@@ -71,7 +72,7 @@ public class LoginController {
 	 */
 	@RequestMapping(value = "checkLogin", method = RequestMethod.POST)
 	public ModelAndView checkLogin(@Validated @ModelAttribute LoginForm loginForm, BindingResult result,
-	        HttpSession session) {
+	        HttpSession session, HttpServletRequest request, HttpServletResponse response) throws ParseException {
 		String email = loginForm.getEmail();
 		if (result.hasErrors()) {
 			ModelAndView model = new ModelAndView("login");
@@ -111,13 +112,8 @@ public class LoginController {
 	@RequestMapping(value = "logout", method = RequestMethod.GET)
 	public ModelAndView logout(Model model, HttpSession session, HttpServletRequest req, HttpServletResponse resp)
 	        throws IOException, ServletException {
-		resp.setDateHeader("Expires", 0);
-		resp.setHeader("Last-Modified", new Date().toString());
-		resp.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0");
-		resp.setHeader("Pragma", "no-cache");
-		resp.setHeader("X-Content-Type-Options", "nosniff");
-		resp.setHeader("X-Frame-Options", "DENY");
-		session.removeAttribute("loginUserName");
+		
+		session.removeAttribute("LOGIN_USER");
 		session.invalidate();
 		ModelAndView loginView = new ModelAndView("redirect:/login");
 		return loginView;

@@ -14,29 +14,29 @@
 	<context:property-placeholder
 		location="classpath:application.properties" />
 	<mvc:annotation-driven />
-	
+
 	<!-- Specifying the Resource location to load JS, CSS, Images etc -->
 	<mvc:resources location="/resources/"
 		mapping="/resources/**" />
-		
-	<bean id="messageSource" 
+
+	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basenames" value="classpath:messages"></property>
 		<property name="defaultEncoding" value="UTF-8" />
 	</bean>
-	
+
 	<!-- ViewResolver -->
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/pages/" />
 		<property name="suffix" value=".jsp" />
 	</bean>
-	
-	<bean id="multipartResolver"   
+
+	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<property name="maxUploadSize" value="2000000" />
 	</bean>
-	
+
 	<!-- DataSource -->
 	<bean
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource"
@@ -59,14 +59,35 @@
 				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
 			</props>
 		</property>
-		<property name="packagesToScan" value="scm.bulletinboard.system"></property>
+		<property name="packagesToScan"
+			value="scm.bulletinboard.system"></property>
 	</bean>
 	<!-- Transaction -->
 	<bean id="transactionManager"
 		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-
+	<!-- Interceptors -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<mvc:exclude-mapping path="/resources/**" />
+			<mvc:exclude-mapping path="/login" />
+			<mvc:exclude-mapping path="/logout" />
+			<mvc:exclude-mapping path="/err*" />
+			<bean
+				class="scm.bulletinboard.system.interceptors.AuthenticationInterceptor" />
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<mvc:exclude-mapping path="/resources/**" />
+			<mvc:exclude-mapping path="/login" />
+			<mvc:exclude-mapping path="/logout" />
+			<mvc:exclude-mapping path="/err*" />
+			<bean
+				class="scm.bulletinboard.system.interceptors.AuthorizationInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
 	<tx:annotation-driven
 		transaction-manager="transactionManager" />
 </beans>

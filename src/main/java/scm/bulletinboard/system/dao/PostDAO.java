@@ -23,4 +23,8 @@ public interface PostDAO {
 	
 	public void softDelete(int id, int userId, Date deletedDate);
 	
+	public Post isDuplicateTitleExist(String title);
+
+	public void postUploadData(Post postData);
+	
 }

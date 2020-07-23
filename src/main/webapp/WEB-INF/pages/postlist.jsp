@@ -3,7 +3,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 <jsp:include page="layout/header.jsp"></jsp:include>
 <jsp:include page="layout/menu.jsp"></jsp:include>
 <form:form method="post" action="searchPosts" commandName="postSearch"
@@ -25,10 +24,10 @@
 					<a href="createpost" class="btn btn-primary btn-post-list">Add</a>
 				</div>
 				<div class="col-md-2 mb-1 col-sm-3 col-4">
-					<a href="#" class="btn btn-primary btn-post-list">Upload</a>
+					<a href="uploadcsv" class="btn btn-primary btn-post-list">Upload</a>
 				</div>
 				<div class="col-md-2 mb-1 col-sm-3 col-4">
-					<a href="#" class="btn btn-primary btn-post-list">Download</a>
+					<a href="download" class="btn btn-primary btn-post-list">Download</a>
 				</div>
 			</div>
 			<table class="table table-bordered">

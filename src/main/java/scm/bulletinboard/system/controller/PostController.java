@@ -1,7 +1,10 @@
 package scm.bulletinboard.system.controller;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,10 +18,18 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.google.common.io.Files;
+
+import net.sf.jasperreports.engine.JRException;
 import scm.bulletinboard.system.form.post.PostCreateForm;
 import scm.bulletinboard.system.form.post.PostForm;
 import scm.bulletinboard.system.model.Post;
+import scm.bulletinboard.system.service.DownloadService;
 import scm.bulletinboard.system.service.PostService;
 import scm.bulletinboard.system.service.UserService;
 
@@ -58,20 +69,29 @@ public class PostController {
 	MessageSource messageSource;
 
 	/**
+	 * <h2>${Download Service}</h2>
+	 * <p>
+	 * ${Declare Download Service For Using Service Methods}
+	 * </p>
+	 */
+	@Autowired
+	DownloadService downloadService;
+
+	/**
 	 * <h2>${Get Post List}</h2>
 	 * <p>
 	 * ${Go To postlist Route, Show Post List Page}
 	 * </p>
 	 */
 	@RequestMapping(value = "postlist", method = RequestMethod.GET)
-	public ModelAndView showPosts(ModelAndView model) {
+	public ModelAndView showPosts(ModelAndView model, HttpServletResponse response, HttpServletRequest request, HttpSession session) {
 		PostForm postForm = new PostForm();
 		List<Post> postList;
 		int postCount;
 		postList = postService.getAllPosts();
 		postCount = postService.getPostCount();
 		int paginationCount = postCount / 7;
-		if(paginationCount != 0) {
+		if (paginationCount != 0) {
 			++paginationCount;
 		}
 		model.addObject("postLists", postList);
@@ -102,7 +122,7 @@ public class PostController {
 		List<Post> postList = postService.getPostsByPageId(pageId, total);
 		int postCount = postService.getPostCount();
 		int paginationCount = postCount / 7;
-		if(paginationCount != 0) {
+		if (paginationCount != 0) {
 			++paginationCount;
 		}
 		model.addObject("postSearch", postForm);
@@ -260,14 +280,7 @@ public class PostController {
 	public ModelAndView savePost(@PathVariable("id") int id, @PathVariable("title") String title,
 	        @PathVariable("description") String description, @PathVariable("status") int status, HttpSession session,
 	        HttpServletRequest request) {
-		PostCreateForm postCreateForm = new PostCreateForm();
-		if (id != 0) {
-			postCreateForm.setId(id);
-		}
-		postCreateForm.setTitle(title);
-		postCreateForm.setDescription(description);
-		boolean active = (status == 1) ? true : false;
-		postCreateForm.setActive(active);
+		PostCreateForm postCreateForm = postService.addToSavePost(id, title, description, status);
 		Integer loginUserId = (Integer) request.getSession().getAttribute("loginUserId");
 		Date date = userService.getDateData();
 		Post post = postService.addNewPost(postCreateForm, loginUserId, date);
@@ -341,7 +354,7 @@ public class PostController {
 	}
 
 	/**
-	 * <h2>${Redirecting Post List Page}</h2>
+	 * <h2>${Redirecting Post List Page Method}</h2>
 	 * <p>
 	 * ${Redirecting Post List}
 	 * </p>
@@ -357,7 +370,7 @@ public class PostController {
 	}
 
 	/**
-	 * <h2>${Redirecting Post Create Page}</h2>
+	 * <h2>${Redirecting Post Create Page Method}</h2>
 	 * <p>
 	 * ${Redirecting Post Create Page with Error Message}
 	 * </p>
@@ -378,6 +391,72 @@ public class PostController {
 			model.addObject("postDescription", post.getDescription());
 			model.addObject("postStatus", post.getStatus());
 		}
+		return model;
+	}
+
+	/**
+	 * <h2>${CSV Upload Form}</h2>
+	 * <p>
+	 * ${Go To uploadcsv Route, Show CSV Upload Form Page}
+	 * </p>
+	 */
+	@RequestMapping(value = "postlist/uploadcsv", method = RequestMethod.GET)
+	public ModelAndView showUploadCSV(ModelAndView model) {
+		model.setViewName("uploadcsv");
+		return model;
+	}
+
+	/**
+	 * <h2>${CSV Uploading}</h2>
+	 * <p>
+	 * ${Go To uploadCSVFile Route And Do Uploading Process}
+	 * </p>
+	 */
+	@RequestMapping(value = "postlist/uploadCSVFile", method = RequestMethod.POST)
+	public ModelAndView uploadCSV(@RequestParam(value = "csvfile") MultipartFile uploadFile, HttpServletRequest request)
+	        throws IOException {
+		ModelAndView uploadView = new ModelAndView("uploadcsv");
+		if (!Files.getFileExtension(uploadFile.getOriginalFilename()).toString().equals("csv")) {
+			uploadView.addObject("csvError", messageSource.getMessage("MSG_0008", null, null));
+			return uploadView;
+		} else {
+			int loginUserId = (int) request.getSession().getAttribute("loginUserId");
+			List<String> uploadErrors = this.postService.uploadCSV(uploadFile, loginUserId);
+			if (uploadErrors.size() != 0) {
+				uploadView = new ModelAndView("uploadcsv");
+				uploadView.addObject("uploadErrorMsg", uploadErrors);
+			} else {
+				uploadView = new ModelAndView("redirect:/postlist/");
+			}
+			return uploadView;
+		}
+	}
+
+	/**
+	 * <h2>${Downloading Posts As Excel Format}</h2>
+	 * <p>
+	 * ${Go To download Route And Do Downloading Process}
+	 * </p>
+	 * @throws JRException 
+	 */
+	@RequestMapping(value = "postlist/download")
+	public ModelAndView download(HttpServletRequest request, HttpServletResponse response) throws JRException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		HashMap<String, Object> parameter = new HashMap<String, Object>();
+		List<Post> postList = postService.getAllPosts();
+		String downloadFileName = "";
+		String fileName = "PostList" + System.currentTimeMillis() + ".excel";
+		String downloadPath = request.getServletContext().getRealPath("/") + "WEB-INF\\reports\\";
+		downloadFileName = downloadService.generateDownload(postList, baos, fileName, parameter, downloadPath);
+		response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=" + downloadFileName);
+        try {
+            baos.writeTo(response.getOutputStream());
+            baos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ModelAndView model = new ModelAndView("redirect:/postlist/");
 		return model;
 	}
 

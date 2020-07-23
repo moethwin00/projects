@@ -1,5 +1,9 @@
 package scm.bulletinboard.system.service.impl;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -8,7 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
 import scm.bulletinboard.system.dao.PostDAO;
+import scm.bulletinboard.system.dao.UserDAO;
 import scm.bulletinboard.system.form.post.PostCreateForm;
 import scm.bulletinboard.system.model.Post;
 import scm.bulletinboard.system.model.User;
@@ -30,6 +37,15 @@ public class PostServiceImpl implements PostService {
 	 */
 	@Autowired
 	PostDAO postDAO;
+
+	/**
+	 * <h2>${User DAO}</h2>
+	 * <p>
+	 * ${Declare User DAO For Using DAO Methods}
+	 * </p>
+	 */
+	@Autowired
+	UserDAO userDAO;
 
 	/**
 	 * <h2>${User Service}</h2>
@@ -198,7 +214,7 @@ public class PostServiceImpl implements PostService {
 	/**
 	 * <h2>${Data Setting into PostCreateForm}</h2>
 	 * <p>
-	 * Data Setting from Post to PostCreateForm 
+	 * Data Setting from Post to PostCreateForm
 	 * </p>
 	 * 
 	 * @param ${post, request}
@@ -219,5 +235,94 @@ public class PostServiceImpl implements PostService {
 			postCreateForm.setStatus(Integer.parseInt(request.getParameter("postStatus")));
 		}
 		return postCreateForm;
+	}
+
+	/**
+	 * <h2>${Uploading CSV File}</h2>
+	 * <p>
+	 * CSV file uploading
+	 * </p>
+	 * 
+	 * @param ${uploadFile, loginUserId}
+	 * @return ${List}
+	 * @throws IOException
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public List<String> uploadCSV(MultipartFile uploadFile, int currentUserId) throws IOException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(uploadFile.getInputStream()));
+		List<String> uploadErrors = new ArrayList<>();
+		uploadErrors.add("");
+		int lineNumber = 1;
+		String[] attributes;
+		List<Post> postList = new ArrayList();
+		String line = reader.readLine();
+		while (line != null) {
+			Post post = new Post();
+			Date currentDate = new Date();
+			attributes = line.split(",");
+			if (attributes != null) {
+				if (attributes.length == 3) {
+					Post resultPostByTitle = this.postDAO.isDuplicateTitleExist(attributes[0]);
+					if (!attributes[0].equals("") && !attributes[0].equals(null) && !attributes[0].isEmpty()
+					        && resultPostByTitle == null && attributes[2].length() == 1) {
+						post.setTitle(attributes[0]);
+						post.setDescription(attributes[1]);
+						post.setStatus(Integer.parseInt(attributes[2]) != 0 && Integer.parseInt(attributes[2]) != 1 ? 1
+						        : Integer.parseInt(attributes[2]));
+						post.setUser(userDAO.getUserById(currentUserId));
+						post.setUser2(userDAO.getUserById(currentUserId));
+						post.setCreatedAt(currentDate);
+						post.setUpdatedAt(currentDate);
+						postList.add(post);
+						System.out.println(post);
+					} else {
+						if (resultPostByTitle != null) {
+							uploadErrors.remove(0);
+							uploadErrors.add("Post Title Data always Exist! Error At Row " + lineNumber);
+						}
+						if (attributes[0].equals(null) || attributes[0].equals("") || attributes[0].isEmpty()) {
+							uploadErrors.remove(0);
+							uploadErrors.add("Post Title Data is Empty! Error At Row " + lineNumber);
+						}
+					}
+				} else if (attributes.length == 2 || attributes.length == 1 || attributes.length == 0) {
+					uploadErrors.remove(0);
+					uploadErrors.add("Post Status Data is Empty! Error At Row " + lineNumber);
+					if (attributes.length == 0) {
+						uploadErrors.remove(0);
+						uploadErrors.add("Post Title Data is Empty! Error At Row " + lineNumber);
+					}
+				}
+				line = reader.readLine();
+			}
+			++lineNumber;
+		}
+		for (int i = 0; i < postList.size(); i++) {
+			postDAO.postUploadData(postList.get(i));
+		}
+		return uploadErrors;
+	}
+
+	/**
+	 * <h2>${Data Setting into PostCreateForm to Save Posts}</h2>
+	 * <p>
+	 * Data Setting into PostCreateForm to Save Post
+	 * </p>
+	 * 
+	 * @param ${id, title, description, status}
+	 */
+	@Override
+	public PostCreateForm addToSavePost(int id, String title, String description, int status) {
+		PostCreateForm postCreateForm = new PostCreateForm();
+		if (id != 0) {
+			postCreateForm.setId(id);
+		}
+		postCreateForm.setTitle(title);
+		postCreateForm.setDescription(description);
+		boolean active = (status == 1) ? true : false;
+		postCreateForm.setActive(active);
+		return postCreateForm;
+
 	}
 }

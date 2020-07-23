@@ -1,9 +1,12 @@
 package scm.bulletinboard.system.service;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import scm.bulletinboard.system.form.post.PostCreateForm;
 import scm.bulletinboard.system.model.Post;
@@ -36,6 +39,10 @@ public interface PostService {
 	public Post addNewPost(PostCreateForm postCreateForm, Integer loginUserId, Date date);
 
 	public PostCreateForm setDataToPostCreateForm(Post post, HttpServletRequest request);
+
+	public List<String> uploadCSV(MultipartFile uploadFile, int loginUserId) throws IOException;
+
+	public PostCreateForm addToSavePost(int id, String title, String description, int status);
 	
 
 }
