@@ -5,7 +5,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <jsp:include page="layout/header.jsp"></jsp:include>
 <jsp:include page="layout/menu.jsp"></jsp:include>
-<form:form method="post" action="searchPosts" commandName="postSearch"
+<form:form method="post" action="postlist/searchPosts" commandName="postSearch"
 	id="movePage">
 	<div class="container">
 		<h5 class="h5 mb-3">Post List</h5>
@@ -21,13 +21,13 @@
 						class="btn btn-primary btn-post-list">
 				</div>
 				<div class="col-md-2 mb-1 col-sm-3 col-4">
-					<a href="createpost" class="btn btn-primary btn-post-list">Add</a>
+					<a href="postlist/createpost" class="btn btn-primary btn-post-list">Add</a>
 				</div>
 				<div class="col-md-2 mb-1 col-sm-3 col-4">
-					<a href="uploadcsv" class="btn btn-primary btn-post-list">Upload</a>
+					<a href="postlist/uploadcsv" class="btn btn-primary btn-post-list">Upload</a>
 				</div>
 				<div class="col-md-2 mb-1 col-sm-3 col-4">
-					<a href="download" class="btn btn-primary btn-post-list">Download</a>
+					<a href="postlist/download" class="btn btn-primary btn-post-list">Download</a>
 				</div>
 			</div>
 			<table class="table table-bordered">
@@ -49,7 +49,7 @@
 							<td>${post.description}</td>
 							<td>${post.user.name}</td>
 							<td>${post.createdAt}</td>
-							<td><a href="editPost?id=${post.id}">Edit</a></td>
+							<td><a href="postlist/editPost?id=${post.id}">Edit</a></td>
 							<td><a href="#" data-toggle="modal"
 								data-target="#confirmModal${post.id}">Delete</a></td>
 						</tr>
@@ -75,7 +75,7 @@
 							</div>
 							<div class="modal-footer bg-danger">
 								<button type="button" class="btn btn-primary"
-									onclick="deletePost(${post.id})">Yes</button>
+									onclick="postlist/deletePost(${post.id})">Yes</button>
 								<button type="button" class="btn btn-secondary"
 									data-dismiss="modal">No</button>
 							</div>
@@ -129,7 +129,7 @@
 									aria-hidden="true">&laquo;</span> <span class="sr-only">Previous</span>
 							</a></li>
 							<c:forEach var="i" begin="1" end="${paginationCount}">
-								<li class="page-item" id="page-item${i}"><a class="page-link" href="${i}">${i}</a></li>
+								<li class="page-item" id="page-item${i}"><a class="page-link" href="postlist?page=${i}">${i}</a></li>
 							</c:forEach>
 						</c:if>
 						<li class="page-item" id="next"><a class="page-link"

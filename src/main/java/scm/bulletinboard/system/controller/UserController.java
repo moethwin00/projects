@@ -56,55 +56,31 @@ public class UserController {
 	 * ${Go To userlist Route, Show User List Page}
 	 * </p>
 	 */
-	@RequestMapping(value = "/userlist", method = RequestMethod.GET)
-	public ModelAndView showUsers(ModelAndView model, HttpSession session) {
-		if (session.getAttribute("LOGIN_USER") == null) {
-			return new ModelAndView("redirect:/login");
-		}
+	@RequestMapping(value = "userlist", method = RequestMethod.GET)
+	public ModelAndView showUsers(ModelAndView model, HttpSession session, HttpServletRequest request) {
 		UserForm userForm = new UserForm();
 		List<User> userList;
 		int userCount;
-		userList = userService.getAllUsers();
+		if (request.getParameter("page") != null) {
+			int pageId = Integer.parseInt(request.getParameter("page"));
+			int total = 7;
+			if (pageId == 1) {
+
+			} else {
+				pageId = (pageId - 1) * total + 1;
+			}
+
+			userList = userService.getUserByPageId(pageId, total);
+		} else {
+			userList = userService.getAllUsers();
+		}
 		userCount = userService.getUserCount();
 		int paginationCount = userCount / 7;
-		if(paginationCount != 0) {
+		if (paginationCount != 0) {
 			++paginationCount;
 		}
 		model.addObject("userLists", userList);
 		model.addObject("userSearch", userForm);
-		model.addObject("paginationCount", paginationCount);
-		model.addObject("userCount", userCount);
-		model.setViewName("userlist");
-		return model;
-	}
-
-	/**
-	 * <h2>${Get User List By Pagination Number}</h2>
-	 * <p>
-	 * ${Go To userlist Route, Show User List Page By Pagination Number}
-	 * </p>
-	 */
-	@RequestMapping(value = "userlist/{pageId}", method = RequestMethod.GET)
-	public ModelAndView showUsers(@PathVariable int pageId, ModelAndView model, HttpSession session) {
-		if (session.getAttribute("LOGIN_USER") == null) {
-			return new ModelAndView("redirect:/login");
-		}
-		UserForm userForm = new UserForm();
-		int total = 7;
-		if (pageId == 1) {
-
-		} else {
-			pageId = (pageId - 1) * total + 1;
-		}
-
-		List<User> userList = userService.getUserByPageId(pageId, total);
-		int userCount = userService.getUserCount();
-		int paginationCount = userCount / 7;
-		if(paginationCount != 0) {
-			++paginationCount;
-		}
-		model.addObject("userSearch", userForm);
-		model.addObject("userLists", userList);
 		model.addObject("paginationCount", paginationCount);
 		model.addObject("userCount", userCount);
 		model.setViewName("userlist");
@@ -128,7 +104,7 @@ public class UserController {
 
 		if (userForm.getName() == "" && userForm.getEmail() == "" && userForm.getCreatedFrom() == ""
 		        && userForm.getCreatedTo() == "") {
-			return new ModelAndView("redirect:/userlist/");
+			return new ModelAndView("redirect:/userlist");
 		} else {
 			return searchUserView;
 		}
@@ -164,7 +140,6 @@ public class UserController {
 		view.addObject("userCount", count);
 	}
 
-
 	/**
 	 * <h2>${Create User}</h2>
 	 * <p>
@@ -172,10 +147,8 @@ public class UserController {
 	 * </p>
 	 */
 	@RequestMapping(value = "userlist/createuser", method = RequestMethod.GET)
-	public ModelAndView createuser(ModelAndView model, HttpSession session, HttpServletRequest request) {
-		if (session.getAttribute("LOGIN_USER") == null) {
-			return new ModelAndView("redirect:/login");
-		}
+	public ModelAndView createuser(ModelAndView model, HttpSession session, HttpServletRequest request,
+	        HttpServletResponse response) {
 		UserCreateForm userCreateForm = new UserCreateForm();
 		model.addObject("errorMsg", request.getParameter("errorMsg"));
 		model.addObject("name", request.getParameter("name"));
@@ -250,8 +223,8 @@ public class UserController {
 	 * ${Go To editUser Route, Show User Creation Form Page To Edit}
 	 * </p>
 	 */
-	@RequestMapping(value = "/userlist/editUser")
-	public ModelAndView editUser(HttpServletRequest request) {
+	@RequestMapping(value = "userlist/editUser")
+	public ModelAndView editUser(HttpServletRequest request, HttpServletResponse response) {
 		int userId = Integer.parseInt(request.getParameter("id"));
 		User user = userService.getUserById(userId);
 		UserCreateForm userCreateForm = userService.setDataToUserCreateForm(user);

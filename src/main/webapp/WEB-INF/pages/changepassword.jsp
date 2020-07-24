@@ -7,7 +7,7 @@
 <jsp:include page="layout/menu.jsp"></jsp:include>
 <div class="container post-container">
 	<h5 class="h5 mb-3">Change Password</h5>
-	<form:form method="post" action="checkpassword" modelAttribute="password">
+	<form:form method="post" action="changepassword" modelAttribute="password">
 		<form:hidden path="id" value="${password.id}" />
 		<div class="row mb-3">
 			<div class="col-md-2 col-sm-3 col-6">

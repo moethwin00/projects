@@ -70,7 +70,7 @@ public class LoginController {
 	 * ${Get Login Data(Email, Password) And Go To Post List}
 	 * </p>
 	 */
-	@RequestMapping(value = "checkLogin", method = RequestMethod.POST)
+	@RequestMapping(value = "login", method = RequestMethod.POST)
 	public ModelAndView checkLogin(@Validated @ModelAttribute LoginForm loginForm, BindingResult result,
 	        HttpSession session, HttpServletRequest request, HttpServletResponse response) throws ParseException {
 		String email = loginForm.getEmail();
@@ -86,7 +86,7 @@ public class LoginController {
 				session.setAttribute("loginUserName", user.getName());
 				ModelAndView model = new ModelAndView();
 				model.addObject("postSearch", new PostForm());
-				model.setViewName("redirect:/postlist/");
+				model.setViewName("redirect:/postlist");
 				return model;
 			} else {
 				ModelAndView model = new ModelAndView();

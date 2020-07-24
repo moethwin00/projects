@@ -17,7 +17,7 @@
 	<jsp:include page="layout/menu.jsp"></jsp:include>
 		<div class="container pt-3">
 			<h5 class="h5 mb-3">Login Form</h5>
-			<form:form method="post" action="checkLogin" modelAttribute="loginForm">
+			<form:form method="post" action="login" modelAttribute="loginForm">
 				<div class="row mb-3">
 					<div class="col-md-7">
 						<c:if test="${errorMsg != null }">

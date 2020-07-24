@@ -1,16 +1,16 @@
 package scm.bulletinboard.system.controller;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -19,13 +19,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.gembox.spreadsheet.SaveOptions;
+import com.gembox.spreadsheet.SpreadsheetInfo;
 import com.google.common.io.Files;
 
-import net.sf.jasperreports.engine.JRException;
 import scm.bulletinboard.system.form.post.PostCreateForm;
 import scm.bulletinboard.system.form.post.PostForm;
 import scm.bulletinboard.system.model.Post;
@@ -84,12 +84,25 @@ public class PostController {
 	 * </p>
 	 */
 	@RequestMapping(value = "postlist", method = RequestMethod.GET)
-	public ModelAndView showPosts(ModelAndView model, HttpServletResponse response, HttpServletRequest request, HttpSession session) {
+	public ModelAndView showPosts(ModelAndView model, HttpServletResponse response, HttpServletRequest request,
+	        HttpSession session) {
 		PostForm postForm = new PostForm();
 		List<Post> postList;
 		int postCount;
-		postList = postService.getAllPosts();
-		postCount = postService.getPostCount();
+		if (request.getParameter("page") != null) {
+			int pageId = Integer.parseInt(request.getParameter("page"));
+			int total = 7;
+			if (pageId == 1) {
+
+			} else {
+				pageId = (pageId - 1) * total + 1;
+			}
+
+			postList = postService.getPostsByPageId(pageId, total);
+		} else {
+			postList = postService.getAllPosts();
+		}
+		postCount = userService.getUserCount();
 		int paginationCount = postCount / 7;
 		if (paginationCount != 0) {
 			++paginationCount;
@@ -97,36 +110,6 @@ public class PostController {
 		model.addObject("postLists", postList);
 		model.addObject("title", postForm.getTitle());
 		model.addObject("postSearch", postForm);
-		model.addObject("paginationCount", paginationCount);
-		model.addObject("postCount", postCount);
-		model.setViewName("postlist");
-		return model;
-	}
-
-	/**
-	 * <h2>${Get Post List By Pagination Number}</h2>
-	 * <p>
-	 * ${Go To postlist Route, Show Post List Page By Pagination Number}
-	 * </p>
-	 */
-	@RequestMapping(value = "postlist/{pageId}", method = RequestMethod.GET)
-	public ModelAndView showPosts(@PathVariable int pageId, ModelAndView model) {
-		PostForm postForm = new PostForm();
-		int total = 7;
-		if (pageId == 1) {
-
-		} else {
-			pageId = (pageId - 1) * total + 1;
-		}
-
-		List<Post> postList = postService.getPostsByPageId(pageId, total);
-		int postCount = postService.getPostCount();
-		int paginationCount = postCount / 7;
-		if (paginationCount != 0) {
-			++paginationCount;
-		}
-		model.addObject("postSearch", postForm);
-		model.addObject("postLists", postList);
 		model.addObject("paginationCount", paginationCount);
 		model.addObject("postCount", postCount);
 		model.setViewName("postlist");
@@ -437,27 +420,19 @@ public class PostController {
 	 * <p>
 	 * ${Go To download Route And Do Downloading Process}
 	 * </p>
-	 * @throws JRException 
+	 * 
+	 * @throws IOException
 	 */
 	@RequestMapping(value = "postlist/download")
-	public ModelAndView download(HttpServletRequest request, HttpServletResponse response) throws JRException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		HashMap<String, Object> parameter = new HashMap<String, Object>();
+	public HttpEntity<byte[]> download(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		SpreadsheetInfo.setLicense("FREE-LIMITED-KEY");
 		List<Post> postList = postService.getAllPosts();
-		String downloadFileName = "";
-		String fileName = "PostList" + System.currentTimeMillis() + ".excel";
-		String downloadPath = request.getServletContext().getRealPath("/") + "WEB-INF\\reports\\";
-		downloadFileName = downloadService.generateDownload(postList, baos, fileName, parameter, downloadPath);
-		response.setContentType("application/octet-stream");
-        response.setHeader("Content-Disposition", "attachment; filename=" + downloadFileName);
-        try {
-            baos.writeTo(response.getOutputStream());
-            baos.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ModelAndView model = new ModelAndView("redirect:/postlist/");
-		return model;
+		byte[] bytes = downloadService.generateDownload(postList);
+		HttpHeaders header = new HttpHeaders();
+		header.set(HttpHeaders.CONTENT_TYPE, SaveOptions.getCsvDefault().getContentType());
+		header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=PostList.csv");
+		header.setContentLength(bytes.length);
+		return new HttpEntity<>(bytes, header);
 	}
 
 }

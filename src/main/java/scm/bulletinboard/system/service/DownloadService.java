@@ -1,11 +1,8 @@
 package scm.bulletinboard.system.service;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 
-import net.sf.jasperreports.engine.JRException;
 import scm.bulletinboard.system.model.Post;
 
 /**
@@ -15,8 +12,10 @@ import scm.bulletinboard.system.model.Post;
  * </p>
  */
 public interface DownloadService {
-	public void downloadExcel(List<Post> postList) throws IOException;
+//	public void downloadExcel(List<Post> postList) throws IOException;
+//
+//	public String generateDownload(List<Post> postList, ByteArrayOutputStream baos, String filename,
+//	        HashMap<String, Object> parameter, String path) throws JRException;
 
-	public String generateDownload(List<Post> postList, ByteArrayOutputStream baos, String filename,
-	        HashMap<String, Object> parameter, String path) throws JRException;
+	public byte[] generateDownload(List<Post> postList) throws IOException;
 }

@@ -37,7 +37,7 @@ public class PasswordController {
 		return model;
 	}
 
-	@RequestMapping(value = "userlist/checkpassword", method = RequestMethod.POST)
+	@RequestMapping(value = "userlist/changepassword", method = RequestMethod.POST)
 	public ModelAndView changePassword(@Validated @ModelAttribute(value = "password") PasswordForm passwordForm,
 	        BindingResult result, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		User user = userService.getUserById(passwordForm.getId());
