@@ -7,7 +7,7 @@
 <jsp:include page="layout/menu.jsp"></jsp:include>
 <div class="container post-container">
 	<h5 class="h5 mb-3">Create Users</h5>
-	<form:form method="post" action="confirmuser" modelAttribute="userForm"
+	<form:form method="post" action="confirmuser" modelAttribute="user"
 		enctype="multipart/form-data">
 		<form:hidden path="id" />
 		<div class="row mb-3">
@@ -26,7 +26,7 @@
 				<label><span>Name</span></label>
 			</div>
 			<div class="col-md-4 col-sm-5 col-6">
-				<form:input type="text" path="name" class="form-control" value="${name}"/>
+				<form:input type="text" path="name" class="form-control" value="${userDTO.userCreateForm.name}"/>
 			</div>
 			<div class="col-md-6 col-sm-4 col-12">
 				<small><form:errors class="text-danger" path="name" /></small>
@@ -37,7 +37,7 @@
 				<label><span>Email Address</span></label>
 			</div>
 			<div class="col-md-4 col-sm-5 col-6">
-				<form:input type="text" path="email" class="form-control" value="${email}" />
+				<form:input type="text" path="email" class="form-control" value="${userDTO.userCreateForm.email}" />
 			</div>
 			<div class="col-md-6 col-sm-4 col-12">
 				<small><form:errors class="text-danger" path="email" /></small>

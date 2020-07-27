@@ -19,13 +19,13 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
 
 	    private static final long MAX_INACTIVE_SESSION_TIME = 50 * 10000;
 
-	    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+	    public boolean postHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 	            throws Exception {
 
 	        User loginUser = (User) request.getSession().getAttribute("LOGIN_USER");
 
 	        if ((loginUser == null)) {
-
+	        	response.sendRedirect(request.getContextPath() + "/login");
 	            return true;
 	        }
 

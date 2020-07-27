@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import scm.bulletinboard.system.dto.UserDTO;
 import scm.bulletinboard.system.form.user.UserCreateForm;
 import scm.bulletinboard.system.form.user.UserForm;
 import scm.bulletinboard.system.model.User;
@@ -150,14 +151,15 @@ public class UserController {
 	public ModelAndView createuser(ModelAndView model, HttpSession session, HttpServletRequest request,
 	        HttpServletResponse response) {
 		UserCreateForm userCreateForm = new UserCreateForm();
-		model.addObject("errorMsg", request.getParameter("errorMsg"));
-		model.addObject("name", request.getParameter("name"));
-		model.addObject("email", request.getParameter("email"));
-		model.addObject("type", request.getParameter("type"));
-		model.addObject("phone", request.getParameter("phone"));
-		model.addObject("dob", request.getParameter("dob"));
-		model.addObject("address", request.getParameter("address"));
-		model.addObject("userForm", userCreateForm);
+		UserDTO userDTO = new UserDTO();
+//		model.addObject("name", request.getParameter("name"));
+//		model.addObject("email", request.getParameter("email"));
+//		model.addObject("type", request.getParameter("type"));
+//		model.addObject("phone", request.getParameter("phone"));
+//		model.addObject("dob", request.getParameter("dob"));
+//		model.addObject("address", request.getParameter("address"));
+		model.addObject("user", userCreateForm);
+		model.addObject("userDTO", userDTO);
 		model.addObject("pageTitle", "Create User");
 		model.setViewName("createuser");
 		return model;
@@ -210,7 +212,7 @@ public class UserController {
 			User existUser = userService.getUserByEmail(request.getParameter("email"));
 			model.addObject("user", existUser);
 		}
-		model.addObject("pageTitle", "Create Post Confirmation");
+		model.addObject("pageTitle", "Create User Confirmation");
 		model.addObject("btnText", "Create");
 		model.addObject("user", user);
 		model.setViewName("confirmuser");
@@ -251,20 +253,20 @@ public class UserController {
 		ModelAndView model = new ModelAndView();
 		if (userForCheck != null) {
 			model.addObject("errorMsg", messageSource.getMessage("MSG_0006", null, null));
-			model.addObject("userForm", userCreateForm);
-			model.addObject("name", userCreateForm.getName());
-			model.addObject("email", userCreateForm.getEmail());
-			model.addObject("type", userCreateForm.getType());
-			model.addObject("phone", userCreateForm.getPhone());
-			model.addObject("dob", userCreateForm.getDob());
-			model.addObject("address", userCreateForm.getAddress());
+			model.addObject("user", userCreateForm);
+//			model.addObject("name", userCreateForm.getName());
+//			model.addObject("email", userCreateForm.getEmail());
+//			model.addObject("type", userCreateForm.getType());
+//			model.addObject("phone", userCreateForm.getPhone());
+//			model.addObject("dob", userCreateForm.getDob());
+//			model.addObject("address", userCreateForm.getAddress());
 			model.setViewName("redirect:/userlist/createuser");
 
 		} else {
 			userService.insertUser(userCreateForm, loginUserId, userProfilePath);
 			UserForm userForm = new UserForm();
 			model.addObject("userSearch", userForm);
-			model.setViewName("redirect:/userlist/");
+			model.setViewName("redirect:/userlist");
 		}
 		return model;
 	}
@@ -302,23 +304,33 @@ public class UserController {
 		if (userForCheck != null && userForCheck.getId() != userCreateForm.getId()) {
 			model.addObject("errorMsg", messageSource.getMessage("MSG_0006", null, null));
 			model.addObject("userForm", userCreateForm);
-			model.addObject("name", userCreateForm.getName());
-			model.addObject("email", userCreateForm.getEmail());
-			model.addObject("type", userCreateForm.getType());
-			model.addObject("phone", userCreateForm.getPhone());
-			model.addObject("dob", userCreateForm.getDob());
-			model.addObject("address", userCreateForm.getAddress());
+			UserDTO userDTO = new UserDTO(messageSource.getMessage("MSG_0006", null, null), userCreateForm);
+			model.addObject("userDTO", userDTO);
 			model.setViewName("redirect:/userlist/editUser?id=" + userCreateForm.getId());
 
 		} else {
 			userService.updateUser(userCreateForm, loginUserId, userProfilePath);
 			UserForm userForm = new UserForm();
 			model.addObject("userSearch", userForm);
-			model.setViewName("redirect:/userlist/");
+			model.setViewName("redirect:/userlist");
 		}
 		return model;
 	}
-
+	
+	/**
+	 * <h2>${User Profile}</h2>
+	 * <p>
+	 * ${Go To userprofile Route and Show User Profile}
+	 * </p>
+	 */
+	@RequestMapping(value = "/userprofile", method = RequestMethod.GET)
+	public ModelAndView showProfile(HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+		User user = (User) request.getSession().getAttribute("LOGIN_USER");
+		ModelAndView model = new ModelAndView();
+		model.addObject("currentUser", user);
+		model.setViewName("userprofile");
+		return model;
+	}
 }
 
 //	@RequestMapping(value = "postlist/deletePost")

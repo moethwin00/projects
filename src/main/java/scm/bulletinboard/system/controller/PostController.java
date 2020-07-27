@@ -102,9 +102,9 @@ public class PostController {
 		} else {
 			postList = postService.getAllPosts();
 		}
-		postCount = userService.getUserCount();
+		postCount = postService.getPostCount();
 		int paginationCount = postCount / 7;
-		if (paginationCount != 0) {
+		if (paginationCount != 0 && (postCount % 7) != 0) {
 			++paginationCount;
 		}
 		model.addObject("postLists", postList);
@@ -146,7 +146,6 @@ public class PostController {
 		String search = postForm.getTitle();
 		int count = this.postService.getPostsBySearchkey(search).size();
 		List<Post> postList = this.postService.getPostsBySearchkey(search);
-		System.out.println(postList);
 		if (resultSearch == false && postList.size() == 0) {
 			view.addObject("alertMsg", "There is no search result.");
 		}
@@ -259,10 +258,12 @@ public class PostController {
 	 * ${Go To savePost Route And Post Save to Database And Go To Post List Page}
 	 * </p>
 	 */
-	@RequestMapping(value = "postlist/savePost/{id}/{title}/{description}/{status}", method = RequestMethod.GET)
-	public ModelAndView savePost(@PathVariable("id") int id, @PathVariable("title") String title,
-	        @PathVariable("description") String description, @PathVariable("status") int status, HttpSession session,
-	        HttpServletRequest request) {
+	@RequestMapping(value = "postlist/savePost", method = RequestMethod.GET)
+	public ModelAndView savePost(HttpSession session, HttpServletRequest request) {
+		int id = Integer.parseInt(request.getParameter("id"));
+		String title = request.getParameter("title");
+		String description = request.getParameter("description");
+		int status = Integer.parseInt(request.getParameter("status"));
 		PostCreateForm postCreateForm = postService.addToSavePost(id, title, description, status);
 		Integer loginUserId = (Integer) request.getSession().getAttribute("loginUserId");
 		Date date = userService.getDateData();
@@ -277,26 +278,26 @@ public class PostController {
 				postService.addPost(post);
 				PostForm postForm = new PostForm();
 				model.addObject("postSearch", postForm);
-				model.setViewName("redirect:/postlist/");
+				model.setViewName("redirect:/postlist");
 
 			}
 		} else {
 			Post postForCheck = postService.getPostsByTitle(title);
 			if (postForCheck != null && postForCheck.getId() != post.getId()) {
-				if (postForCheck.getId() != post.getId()) {
+//				if (postForCheck.getId() != post.getId()) {
 					model = redirectErrorView(post);
-				} else {
-					postService.updatePost(post);
-					PostForm postForm = new PostForm();
-					model.addObject("postSearch", postForm);
-					model.setViewName("redirect:/postlist/");
-				}
+//				} else {
+//					postService.updatePost(post);
+//					PostForm postForm = new PostForm();
+//					model.addObject("postSearch", postForm);
+//					model.setViewName("redirect:/postlist");
+////				}
 
 			} else {
 				postService.updatePost(post);
 				PostForm postForm = new PostForm();
 				model.addObject("postSearch", postForm);
-				model.setViewName("redirect:/postlist/");
+				model.setViewName("redirect:/postlist");
 			}
 		}
 		return model;

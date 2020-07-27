@@ -5,9 +5,18 @@ var route = param[param.length - 1];
 var pageId = 0;
 var urlSearchParam = route;
 var routeParam = route.toString().split("?");
-if (routeParam[0] == "userlist" || routeParam[0] == "pagelist") {
+
+function noBack() {
+	 window.history.forward();
+     function noBack()
+     {
+         window.history.forward();
+     }
+}
+
+if (routeParam[0] == "userlist" || routeParam[0] == "postlist") {
 	pageTag = routeParam[1];
-	var pageTag = pageTag.toString().split("=");
+	var pageTag = pageTag.split("=");
 	if (pageTag[0] == "page") {
 		pageId = pageTag[1];
 	}
@@ -32,12 +41,20 @@ window.onload = function() {
 function previousId() {
 	if (pageId > 1) {
 		--pageId;
-		document.location = "userlist?page=" + pageId;
+		if (routeParam[0] == "userlist") {
+			document.location = "userlist?page=" + pageId;
+		} else if (routeParam[0] == "postlist") {
+			document.location = "postlist?page=" + pageId;
+		}
 	}
 }
 function nextId(paginationCount) {
 	if (pageId < paginationCount) {
 		++pageId;
-		document.location = "userlist?page=" + pageId;
+		if (routeParam[0] == "userlist") {
+			document.location = "userlist?page=" + pageId;
+		} else if (routeParam[0] == "postlist") {
+			document.location = "postlist?page=" + pageId;
+		}
 	}
 }

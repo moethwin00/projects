@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.sun.java.swing.plaf.windows.resources.windows;
+
 import scm.bulletinboard.system.form.login.LoginForm;
 import scm.bulletinboard.system.form.post.PostForm;
 import scm.bulletinboard.system.model.User;
@@ -114,6 +116,8 @@ public class LoginController {
 	        throws IOException, ServletException {
 		
 		session.removeAttribute("LOGIN_USER");
+		session.removeAttribute("loginUserId");
+		session.removeAttribute("loginUserName");
 		session.invalidate();
 		ModelAndView loginView = new ModelAndView("redirect:/login");
 		return loginView;
