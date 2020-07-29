@@ -20,13 +20,13 @@ import scm.bulletinboard.system.model.Post;
 public interface PostService {
 	public void addPost(Post post);
 
-	public List<Post> getAllPosts();
+	public List<Post> getAllPosts(int loginUserId, String userRole);
 
-	public int getPostCount();
+	public int getPostCount(int loginUserId, String userRole);
 
-	public List<Post> getPostsByPageId(int pageId, int total);
+	public List<Post> getPostsByPageId(int pageId, int total, int loginUserId, String userRole);
 
-	public List<Post> getPostsBySearchkey(String searchKey);
+	public List<Post> getPostsBySearchkey(String searchKey, int loginUserId, String userRole);
 
 	public Post getPostsByTitle(String title);
 	

@@ -19,15 +19,36 @@ import scm.bulletinboard.system.form.user.UserForm;
 import scm.bulletinboard.system.model.User;
 import scm.bulletinboard.system.service.UserService;
 
+/**
+ * Controller for Login
+ */
 @Controller
 public class PasswordController {
 
+	/**
+	 * <h2>${User Service}</h2>
+	 * <p>
+	 * ${Declare User Service For Using Service Methods}
+	 * </p>
+	 */
 	@Autowired
 	UserService userService;
 
+	/**
+	 * <h2>${Password Change Service Error Message}</h2>
+	 * <p>
+	 * ${Declare MessageSource For Accessing Messages From Property Resource File}
+	 * </p>
+	 */
 	@Autowired
 	MessageSource messageSource;
 
+	/**
+	 * <h2>${Get Password Change Form}</h2>
+	 * <p>
+	 * ${Go To changpassword Route, Show Change Password Page}
+	 * </p>
+	 */
 	@RequestMapping(value = "userlist/changepassword", method = RequestMethod.GET)
 	public ModelAndView showPasswordForm(ModelAndView model, HttpServletRequest request) {
 		PasswordForm passwordForm = new PasswordForm();
@@ -37,6 +58,12 @@ public class PasswordController {
 		return model;
 	}
 
+	/**
+	 * <h2>${Calling Change Password Route By POST Method}</h2>
+	 * <p>
+	 * ${Go To changpassword Route, Do Password Change Process}
+	 * </p>
+	 */
 	@RequestMapping(value = "userlist/changepassword", method = RequestMethod.POST)
 	public ModelAndView changePassword(@Validated @ModelAttribute(value = "password") PasswordForm passwordForm,
 	        BindingResult result, HttpServletRequest request, HttpServletResponse response, HttpSession session) {

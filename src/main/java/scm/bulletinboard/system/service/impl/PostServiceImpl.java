@@ -65,8 +65,8 @@ public class PostServiceImpl implements PostService {
 	 * @return ${List}
 	 */
 	@Transactional
-	public List<Post> getAllPosts() {
-		return postDAO.getAllPosts();
+	public List<Post> getAllPosts(int loginUserId, String userRole) {
+		return postDAO.getAllPosts(loginUserId, userRole);
 	}
 
 	/**
@@ -77,8 +77,8 @@ public class PostServiceImpl implements PostService {
 	 * 
 	 * @return ${int}
 	 */
-	public int getPostCount() {
-		return postDAO.getPostCount();
+	public int getPostCount(int loginUserId, String userRole) {
+		return postDAO.getPostCount(loginUserId, userRole);
 	}
 
 	/**
@@ -90,8 +90,8 @@ public class PostServiceImpl implements PostService {
 	 * @param ${pageId, total}
 	 * @return ${List}
 	 */
-	public List<Post> getPostsByPageId(int pageId, int total) {
-		return postDAO.getPostsByPageId(pageId, total);
+	public List<Post> getPostsByPageId(int pageId, int total, int loginUserId, String userRole) {
+		return postDAO.getPostsByPageId(pageId, total, loginUserId, userRole);
 	}
 
 	/**
@@ -103,8 +103,8 @@ public class PostServiceImpl implements PostService {
 	 * @param ${searchKey}
 	 * @return ${List}
 	 */
-	public List<Post> getPostsBySearchkey(String searchKey) {
-		return postDAO.getPostsBySearchkey(searchKey);
+	public List<Post> getPostsBySearchkey(String searchKey, int loginUserId, String userRole) {
+		return postDAO.getPostsBySearchkey(searchKey, loginUserId, userRole);
 	}
 
 	/**

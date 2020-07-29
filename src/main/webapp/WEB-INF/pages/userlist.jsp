@@ -85,7 +85,7 @@
 							</div>
 							<div class="modal-footer bg-danger">
 								<button type="button" class="btn btn-primary"
-									onclick="userlist/deleteUser(${user.id})">Yes</button>
+									onclick="deleteUser(${user.id})">Yes</button>
 								<button type="button" class="btn btn-secondary"
 									data-dismiss="modal">No</button>
 							</div>

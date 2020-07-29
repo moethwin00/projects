@@ -8,15 +8,6 @@
 <div class = "container post-container">
 	<h5 class="h5 mb-3">${pageTitle}</h5>
 	<form:form method="post" action="confirmpost" modelAttribute="postForm">
-				<%-- <div class="row mb-3">
-					<div class="col-md-7">
-						<c:if test="${errorMsg != null }">
-							<div class="alert alert-danger alert-dismissible fade show" role="alert">
-								<i class="far fa-times-circle close" data-dismiss="alert" aria-label="Close"></i> <strong>${errorMsg }</strong>
-							</div>
-						</c:if>
-					</div>
-				</div> --%>
 				<form:hidden path="id" />
 				<div class="row mb-3">
 					<div class="col-md-6">
@@ -34,7 +25,7 @@
 				</div>
 				<div class="row mb-3">
 					<div class="col-md-2"><label><span>Description</span></label></div>
-					<div class="col-md-4"><form:textarea path="description" class="form-control"></form:textarea></div>
+					<div class="col-md-4"><form:textarea path="description" class="form-control" value="${postDescription}"></form:textarea></div>
 					<div class="col-md-6"><small><form:errors class="text-danger" path="description"/></small></div>
 				</div>
 				<c:if test="${pageTitle == 'Update Post'}">

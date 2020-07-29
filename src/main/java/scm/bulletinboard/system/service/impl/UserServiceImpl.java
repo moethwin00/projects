@@ -113,7 +113,7 @@ public class UserServiceImpl implements UserService {
 	 * @return ${List}
 	 */
 	public List<User> getUserByPageId(int pageId, int total) {
-		return userDAO.getPostsByPageId(pageId, total);
+		return userDAO.getUsersByPageId(pageId, total);
 	}
 
 	/**
@@ -254,6 +254,7 @@ public class UserServiceImpl implements UserService {
 	public User addNewUser(UserCreateForm userCreateForm, Integer loginUserId, Date date) throws ParseException {
 		User user = new User();
 		if (userCreateForm.getId() != null) {
+			System.out.println(userCreateForm.getId());
 			User oldUser = this.getUserById(userCreateForm.getId());
 			user.setId(userCreateForm.getId());
 			user.setCreatedAt(oldUser.getCreatedAt());
@@ -312,6 +313,20 @@ public class UserServiceImpl implements UserService {
 	public void updatePassword(int id, String newPassword) {
 		String hashPass = BCrypt.hashpw(newPassword, BCrypt.gensalt(12));
 		userDAO.updatePassword(id, hashPass);
+	}
+
+	/**
+	 * <h2>${Soft Delete Post}</h2>
+	 * <p>
+	 * Soft Delete Post
+	 * </p>
+	 * 
+	 * @param ${id, userId, deletedDate}
+	 */
+	@Override
+	public void softDelete(int id, int userId, Date deletedDate) {
+		userDAO.softDelete(id, userId, deletedDate);
+		
 	}
 
 }

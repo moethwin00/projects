@@ -22,15 +22,63 @@
 <script src="${mainJs}"></script>
 <script src="${mainJQuery}"></script>
 <script type="text/javascript">
+	var url = document.location;
+	var param = url.toString().split("/");
+	var route = param[param.length - 1];
+	(function() {
+		if (window.localStorage) {
+			if (!localStorage.getItem('firstLoad')) {
+				localStorage['firstLoad'] = true;
+				window.location.reload();
+			} else
+				localStorage.removeItem('firstLoad');
+		}
+	})();
+	
+	if (route == "searchPosts" || route == "searchUsers") {
+		$("#post-pagination").hide();
+	} else {
+		if (pageId > 1) {
+			$("#prev").removeClass("page-item disabled").addClass("page-item");
+		}
+		var pagCount = document.getElementById("pagination-count").innerHTML;
+		if (pageId == pagCount - 1) {
+			$("#next").addClass("disabled");
+		}
+		$("#page-item" + pageId).removeClass("page-item").addClass(
+				"page-item active");
+	}
+
+	function noBack() {
+		window.sessionStorage.clear();
+		alert("okok");
+		document.location = "${pageContext.request.contextPath}/logout";
+		window.history = null;
+	}
 	function deletePost(id) {
 		var url = document.location;
 		var param = url.toString().split("/");
 		var route = param[param.length - 1];
 		alert(route);
 		if (route == "searchPosts") {
-			document.location = "searchDeletePost?id=" + id;
+			document.location = "${pageContext.request.contextPath}/postlist/searchDeletePost?id="
+					+ id;
 		} else {
-			document.location = "deletePost?id=" + id;
+			document.location = "${pageContext.request.contextPath}/postlist/deletePost?id="
+					+ id;
+		}
+	}
+	function deleteUser(id) {
+		var url = document.location;
+		var param = url.toString().split("/");
+		var route = param[param.length - 1];
+		alert(route);
+		if (route == "searchUsers") {
+			document.location = "${pageContext.request.contextPath}/userlist/searchDeleteUser?id="
+					+ id;
+		} else {
+			document.location = "${pageContext.request.contextPath}/userlist/deleteUser?id="
+					+ id;
 		}
 	}
 	function showImage() {

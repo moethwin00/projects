@@ -11,11 +11,6 @@
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
-	<filter>
-		<description>session filter</description>
-		<filter-name>SessionFilter</filter-name>
-		<filter-class>scm.bulletinboard.system.filter.SessionFilter</filter-class>
-	</filter>
 	<servlet>
 		<servlet-name>spring</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>

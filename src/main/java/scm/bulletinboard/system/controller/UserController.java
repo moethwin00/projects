@@ -13,13 +13,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
-import scm.bulletinboard.system.dto.UserDTO;
 import scm.bulletinboard.system.form.user.UserCreateForm;
 import scm.bulletinboard.system.form.user.UserForm;
 import scm.bulletinboard.system.model.User;
@@ -151,16 +148,8 @@ public class UserController {
 	public ModelAndView createuser(ModelAndView model, HttpSession session, HttpServletRequest request,
 	        HttpServletResponse response) {
 		UserCreateForm userCreateForm = new UserCreateForm();
-		UserDTO userDTO = new UserDTO();
-//		model.addObject("name", request.getParameter("name"));
-//		model.addObject("email", request.getParameter("email"));
-//		model.addObject("type", request.getParameter("type"));
-//		model.addObject("phone", request.getParameter("phone"));
-//		model.addObject("dob", request.getParameter("dob"));
-//		model.addObject("address", request.getParameter("address"));
+		model.addObject("errorMsg", request.getParameter("errorMsg"));
 		model.addObject("user", userCreateForm);
-		model.addObject("userDTO", userDTO);
-		model.addObject("pageTitle", "Create User");
 		model.setViewName("createuser");
 		return model;
 	}
@@ -172,12 +161,10 @@ public class UserController {
 	 * </p>
 	 */
 	@RequestMapping(value = "/userlist/confirmuser", method = RequestMethod.POST)
-	public ModelAndView saveUser(@Validated @ModelAttribute(value = "userForm") UserCreateForm userCreateForm,
+	public ModelAndView saveUser(@Validated @ModelAttribute(value = "user") UserCreateForm userCreateForm,
 	        BindingResult result, HttpSession session, HttpServletRequest request, HttpServletResponse response,
 	        @RequestParam("imageData") String imageData) throws ParseException {
-		if (session.getAttribute("LOGIN_USER") == null) {
-			return new ModelAndView("redirect:/login");
-		}
+		
 		if (result.hasErrors() || !userCreateForm.getPassword().equals(userCreateForm.getConfirmPassword())) {
 			ModelAndView model = new ModelAndView("createuser");
 			if (!userCreateForm.getPassword().equals(userCreateForm.getConfirmPassword())) {
@@ -191,7 +178,6 @@ public class UserController {
 			user.setProfile(imageData);
 			ModelAndView model = new ModelAndView("/confirmuser");
 			model.addObject("user", user);
-
 			model.addObject("profile", userCreateForm.getProfile());
 			return model;
 		}
@@ -212,8 +198,6 @@ public class UserController {
 			User existUser = userService.getUserByEmail(request.getParameter("email"));
 			model.addObject("user", existUser);
 		}
-		model.addObject("pageTitle", "Create User Confirmation");
-		model.addObject("btnText", "Create");
 		model.addObject("user", user);
 		model.setViewName("confirmuser");
 		return model;
@@ -253,14 +237,9 @@ public class UserController {
 		ModelAndView model = new ModelAndView();
 		if (userForCheck != null) {
 			model.addObject("errorMsg", messageSource.getMessage("MSG_0006", null, null));
+			userCreateForm.setPassword("");
 			model.addObject("user", userCreateForm);
-//			model.addObject("name", userCreateForm.getName());
-//			model.addObject("email", userCreateForm.getEmail());
-//			model.addObject("type", userCreateForm.getType());
-//			model.addObject("phone", userCreateForm.getPhone());
-//			model.addObject("dob", userCreateForm.getDob());
-//			model.addObject("address", userCreateForm.getAddress());
-			model.setViewName("redirect:/userlist/createuser");
+			model.setViewName("createuser");
 
 		} else {
 			userService.insertUser(userCreateForm, loginUserId, userProfilePath);
@@ -304,8 +283,6 @@ public class UserController {
 		if (userForCheck != null && userForCheck.getId() != userCreateForm.getId()) {
 			model.addObject("errorMsg", messageSource.getMessage("MSG_0006", null, null));
 			model.addObject("userForm", userCreateForm);
-			UserDTO userDTO = new UserDTO(messageSource.getMessage("MSG_0006", null, null), userCreateForm);
-			model.addObject("userDTO", userDTO);
 			model.setViewName("redirect:/userlist/editUser?id=" + userCreateForm.getId());
 
 		} else {
@@ -331,15 +308,16 @@ public class UserController {
 		model.setViewName("userprofile");
 		return model;
 	}
+	
+	@RequestMapping(value = "userlist/deleteUser")
+	public ModelAndView softDeleteUser(ModelAndView model, HttpServletRequest request, HttpSession session) {
+		int userId = (Integer) request.getSession().getAttribute("loginUserId");
+		Date deletedDate = userService.getDateData();
+		userService.softDelete(Integer.parseInt(request.getParameter("id")), userId, deletedDate);
+		model.setViewName("redirect:/userlist");
+		return model;
+	}
 }
 
-//	@RequestMapping(value = "postlist/deletePost")
-//	public ModelAndView softDelete(ModelAndView model, HttpServletRequest request, HttpSession session) {
-//		int id = Integer.parseInt(request.getParameter("id"));
-//		int userId = (Integer) request.getSession().getAttribute("loginUserId");
-//		Date deletedDate = getDate();
-//		postService.softDelete(Integer.parseInt(request.getParameter("id")), userId, deletedDate);
-//		redirectPostList(model);
-//		return model;
-//	}
+
 //	

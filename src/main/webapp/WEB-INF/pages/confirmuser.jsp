@@ -71,7 +71,6 @@
 					<div class="col-md-8">
 						<p>
 							${user.dob}
-						<%-- 	<fmt:formatDate value="${user.dob}" pattern="dd/MM/yyyy" /> --%>
 						</p>
 						<form:hidden path="dob" value="${user.dob}"/>
 					</div>

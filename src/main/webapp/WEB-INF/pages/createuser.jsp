@@ -16,7 +16,7 @@
 					<div class="alert alert-danger alert-dismissible fade show"
 						role="alert">
 						<i class="far fa-times-circle close" data-dismiss="alert"
-							aria-label="Close"></i> <strong>${errorMsg }</strong>
+							aria-label="Close"></i> <strong>${errorMsg}</strong>
 					</div>
 				</c:if>
 			</div>
@@ -26,7 +26,7 @@
 				<label><span>Name</span></label>
 			</div>
 			<div class="col-md-4 col-sm-5 col-6">
-				<form:input type="text" path="name" class="form-control" value="${userDTO.userCreateForm.name}"/>
+				<form:input type="text" path="name" class="form-control" value="${user.name}"/>
 			</div>
 			<div class="col-md-6 col-sm-4 col-12">
 				<small><form:errors class="text-danger" path="name" /></small>
@@ -37,7 +37,7 @@
 				<label><span>Email Address</span></label>
 			</div>
 			<div class="col-md-4 col-sm-5 col-6">
-				<form:input type="text" path="email" class="form-control" value="${userDTO.userCreateForm.email}" />
+				<form:input type="text" path="email" class="form-control" value="${user.email}" />
 			</div>
 			<div class="col-md-6 col-sm-4 col-12">
 				<small><form:errors class="text-danger" path="email" /></small>
@@ -48,7 +48,7 @@
 				<label><span>Password</span></label>
 			</div>
 			<div class="col-md-4 col-sm-5 col-6">
-				<form:input type="password" path="password" class="form-control"/>
+				<form:input type="password" path="password" class="form-control" value="${user.password}"/>
 			</div>
 			<div class="col-md-6 col-sm-4 col-12">
 				<small class="text-danger"> <form:errors path="password" />
@@ -70,7 +70,7 @@
 				<label><span>Type</span></label>
 			</div>
 			<div class="col-md-4 col-sm-5 col-6">
-				<form:select path="type" class="form-control" value="${type}">
+				<form:select path="type" class="form-control" value="${user.type}">
 					<form:option value="0">Admin</form:option>
 					
 					<form:option value="1">User</form:option>
@@ -85,7 +85,7 @@
 				<label><span>Phone</span></label>
 			</div>
 			<div class="col-md-4 col-sm-5 col-6">
-				<form:input type="text" path="phone" class="form-control" value="${phone}"/>
+				<form:input type="text" path="phone" class="form-control" value="${user.phone}"/>
 			</div>
 			<div class="col-md-6 col-sm-4 col-12">
 				<small><form:errors class="text-danger" path="phone" /></small>
@@ -96,7 +96,7 @@
 				<label><span>Date Of Birth</span></label>
 			</div>
 			<div class="col-md-4 col-sm-5 col-6">
-				<form:input type="date" path="dob" class="form-control" value="${dob}"/>
+				<form:input type="date" path="dob" class="form-control" value="${user.dob}"/>
 			</div>
 			<div class="col-md-6 col-sm-4 col-12">
 				<small><form:errors class="text-danger" path="dob" /></small>
@@ -107,7 +107,7 @@
 				<label><span>Address</span></label>
 			</div>
 			<div class="col-md-4 col-sm-5 col-6">
-				<form:textarea path="address" class="form-control" value="${address}"></form:textarea>
+				<form:textarea path="address" class="form-control" value="${user.address}"></form:textarea>
 			</div>
 			<div class="col-md-6 col-sm-4 col-12">
 				<small><form:errors class="text-danger" path="address" /></small>

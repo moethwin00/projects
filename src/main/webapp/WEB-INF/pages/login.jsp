@@ -10,7 +10,7 @@
 	response.setDateHeader("Expires", 0); //prevents caching at the proxy server
 %>
 <jsp:include page="layout/menu.jsp"></jsp:include>
-<div class="container pt-3">
+<div class="container pt-3" style = "margin-top: 80px; margin-bottom: 180px;">
 	<h5 class="h5 mb-3">Login Form</h5>
 	<form:form method="post" action="login" modelAttribute="loginForm">
 		<div class="row mb-3">

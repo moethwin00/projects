@@ -25,7 +25,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
 	        User loginUser = (User) request.getSession().getAttribute("LOGIN_USER");
 
 	        if ((loginUser == null)) {
-	        	response.sendRedirect(request.getContextPath() + "/login");
+	        	response.sendRedirect(request.getContextPath() + "/postlist");
 	            return true;
 	        }
 

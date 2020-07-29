@@ -52,11 +52,18 @@
 						<label><span>Type</span></label>
 					</div>
 					<div class="col-md-4 col-sm-5 col-6">
-						<form:select path="type" class="form-control" value="${type}">
+						<c:if test="${user.type == '1'}">
+							<c:set var="readOnly" value="true"></c:set>
+						</c:if>
+						
+						<form:select path="type" class="form-control" value="${type}"
+							disabled="${readOnly}">
 							<form:option value="0">Admin</form:option>
 
 							<form:option value="1">User</form:option>
 						</form:select>
+
+
 					</div>
 					<div class="col-md-6 col-sm-4 col-12">
 						<small><form:errors class="text-danger" path="type" /></small>
@@ -123,7 +130,9 @@
 			</div>
 			<div class="col-md-4">
 				<div class="container-profile">
- 					<img id="pp" src="../${userForm.profile}" class="img-profile img img-fluid img-thumbnail" alt="Image preview...">
+					<img id="pp" src="../${userForm.profile}"
+						class="img-profile img img-fluid img-thumbnail"
+						alt="Image preview...">
 				</div>
 			</div>
 		</div>

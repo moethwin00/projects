@@ -11,8 +11,10 @@
 			<a class="navbar-brand" href="#">SCM Bulletin Board</a>
 			<c:if test="${LOGIN_USER != null}">
 				<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-					<li class="nav-item active"><a class="nav-link"
-						href="${pageContext.request.contextPath}/userlist">Users</a></li>
+					<c:if test="${USER_ROLE == '0'}">
+						<li class="nav-item"><a class="nav-link"
+							href="${pageContext.request.contextPath}/userlist">Users</a></li>
+					</c:if>
 					<li class="nav-item"><a class="nav-link"
 						href="${pageContext.request.contextPath}/userprofile">User</a></li>
 					<li class="nav-item"><a class="nav-link"
@@ -21,7 +23,7 @@
 				<form class="form-inline my-2 my-lg-0">
 					<span>${LOGIN_USER.name}&nbsp;&nbsp;</span> <a
 						class="btn btn-outline-success my-2 my-sm-0"
-						href="${pageContext.request.contextPath}/logout">Logout</a>
+						href="javascript:noBack();">Logout</a>
 				</form>
 			</c:if>
 
@@ -29,7 +31,7 @@
 				<ul class="navbar-nav mr-auto mt-2 mt-lg-0"></ul>
 				<form class="form-inline my-2 my-lg-0">
 					<a class="btn btn-outline-success my-2 my-sm-0"
-						href="${pageContext.request.contextPath}/login" onclick="noback()">Login</a>
+						href="${pageContext.request.contextPath}/login">Login</a>
 				</form>
 			</c:if>
 

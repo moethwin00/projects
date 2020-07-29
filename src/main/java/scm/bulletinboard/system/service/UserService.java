@@ -42,4 +42,6 @@ public interface UserService {
 	public UserCreateForm setDataToUserCreateForm(User user);
 
 	public void updatePassword(int id, String newPassword);
+	
+	public void softDelete(int id, int userId, Date deletedDate);
 }

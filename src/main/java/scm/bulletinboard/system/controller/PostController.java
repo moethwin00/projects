@@ -29,6 +29,7 @@ import com.google.common.io.Files;
 import scm.bulletinboard.system.form.post.PostCreateForm;
 import scm.bulletinboard.system.form.post.PostForm;
 import scm.bulletinboard.system.model.Post;
+import scm.bulletinboard.system.model.User;
 import scm.bulletinboard.system.service.DownloadService;
 import scm.bulletinboard.system.service.PostService;
 import scm.bulletinboard.system.service.UserService;
@@ -40,6 +41,8 @@ import scm.bulletinboard.system.service.UserService;
 public class PostController {
 
 	public static final Integer INITIAL_OFFSET = 0;
+	int loginUserId = 0;
+	String userRole = "";
 
 	/**
 	 * <h2>${Post Service}</h2>
@@ -78,6 +81,20 @@ public class PostController {
 	DownloadService downloadService;
 
 	/**
+	 * <h2>${Process For CheckAuthorizedUser}</h2>
+	 * <p>
+	 * ${Process For Checking Authorized User}
+	 * </p>
+	 */
+	private void checkAuthorizedUser(HttpServletRequest request, User user) {
+		if(user != null) {
+			loginUserId = (int) request.getSession().getAttribute("loginUserId");
+			userRole = (String) request.getSession().getAttribute("USER_ROLE");
+		}
+	}
+	
+	
+	/**
 	 * <h2>${Get Post List}</h2>
 	 * <p>
 	 * ${Go To postlist Route, Show Post List Page}
@@ -89,6 +106,7 @@ public class PostController {
 		PostForm postForm = new PostForm();
 		List<Post> postList;
 		int postCount;
+		checkAuthorizedUser(request, (User) request.getSession().getAttribute("LOGIN_USER"));
 		if (request.getParameter("page") != null) {
 			int pageId = Integer.parseInt(request.getParameter("page"));
 			int total = 7;
@@ -97,12 +115,11 @@ public class PostController {
 			} else {
 				pageId = (pageId - 1) * total + 1;
 			}
-
-			postList = postService.getPostsByPageId(pageId, total);
+			postList = postService.getPostsByPageId(pageId, total, loginUserId, userRole);
 		} else {
-			postList = postService.getAllPosts();
+			postList = postService.getAllPosts(loginUserId, userRole);
 		}
-		postCount = postService.getPostCount();
+		postCount = postService.getPostCount(loginUserId, userRole);
 		int paginationCount = postCount / 7;
 		if (paginationCount != 0 && (postCount % 7) != 0) {
 			++paginationCount;
@@ -123,13 +140,13 @@ public class PostController {
 	 * </p>
 	 */
 	@RequestMapping(value = "postlist/searchPosts", method = { RequestMethod.POST })
-	public ModelAndView searchPosts(@ModelAttribute("postSearch") PostForm postForm, HttpSession session)
+	public ModelAndView searchPosts(@ModelAttribute("postSearch") PostForm postForm, HttpSession session, HttpServletRequest request)
 	        throws ParseException {
 		ModelAndView searchPostView = new ModelAndView("postlist");
-		doSearchProcess(searchPostView, INITIAL_OFFSET, true, postForm);
+		doSearchProcess(searchPostView, INITIAL_OFFSET, true, postForm, request);
 
 		if (postForm.getTitle() == "") {
-			return new ModelAndView("redirect:/postlist/");
+			return new ModelAndView("redirect:/postlist");
 		} else {
 			return searchPostView;
 		}
@@ -141,11 +158,12 @@ public class PostController {
 	 * ${Process For Post Searching}
 	 * </p>
 	 */
-	private void doSearchProcess(ModelAndView view, int offset, Boolean resultSearch, PostForm postForm)
+	private void doSearchProcess(ModelAndView view, int offset, Boolean resultSearch, PostForm postForm, HttpServletRequest request)
 	        throws ParseException {
 		String search = postForm.getTitle();
-		int count = this.postService.getPostsBySearchkey(search).size();
-		List<Post> postList = this.postService.getPostsBySearchkey(search);
+		checkAuthorizedUser(request, (User) request.getSession().getAttribute("LOGIN_USER"));
+		int count = this.postService.getPostsBySearchkey(search, loginUserId, userRole).size();
+		List<Post> postList = this.postService.getPostsBySearchkey(search, loginUserId, userRole);
 		if (resultSearch == false && postList.size() == 0) {
 			view.addObject("alertMsg", "There is no search result.");
 		}
@@ -164,14 +182,11 @@ public class PostController {
 	 */
 	@RequestMapping(value = "postlist/createpost", method = RequestMethod.GET)
 	public ModelAndView createpost(ModelAndView model, HttpSession session, HttpServletRequest request) {
-		if (session.getAttribute("LOGIN_USER") == null) {
-			return new ModelAndView("redirect:/login");
-		}
+		
 		PostCreateForm postCreateForm = new PostCreateForm();
-		if (request.getParameter("postTitle") != null) {
-			postCreateForm.setTitle(request.getParameter("postTitle"));
-			postCreateForm.setDescription(request.getParameter("postDescription"));
-			postCreateForm.setStatus(Integer.parseInt(request.getParameter("postStatus")));
+		
+		if (request.getAttribute("post") != null) {
+			postCreateForm = (PostCreateForm) request.getAttribute("post");
 		}
 		model.addObject("postForm", postCreateForm);
 		model.addObject("errorMsg", request.getParameter("errorMsg"));
@@ -219,10 +234,6 @@ public class PostController {
 		ModelAndView model = new ModelAndView();
 		if (request.getParameter("errorMsg") != null) {
 			model.addObject("errorMsg", messageSource.getMessage("MSG_0002", null, null));
-			model.addObject("title", request.getParameter("title"));
-			model.addObject("description", request.getParameter("description"));
-			model.addObject("active", request.getParameter("active"));
-
 		}
 
 		model.addObject("pageTitle", "Create Post Confirmation");
@@ -272,7 +283,7 @@ public class PostController {
 		if (id == 0) {
 			Post postForCheck = postService.getPostsByTitle(title);
 			if (postForCheck != null) {
-				model = redirectErrorView(post);
+				model = redirectErrorView(postCreateForm, post);
 
 			} else {
 				postService.addPost(post);
@@ -284,14 +295,7 @@ public class PostController {
 		} else {
 			Post postForCheck = postService.getPostsByTitle(title);
 			if (postForCheck != null && postForCheck.getId() != post.getId()) {
-//				if (postForCheck.getId() != post.getId()) {
-					model = redirectErrorView(post);
-//				} else {
-//					postService.updatePost(post);
-//					PostForm postForm = new PostForm();
-//					model.addObject("postSearch", postForm);
-//					model.setViewName("redirect:/postlist");
-////				}
+				model = redirectErrorView(postCreateForm, post);
 
 			} else {
 				postService.updatePost(post);
@@ -333,7 +337,7 @@ public class PostController {
 		postService.softDelete(Integer.parseInt(request.getParameter("id")), userId, deletedDate);
 		PostForm postForm = new PostForm();
 		model.addObject("postSearch", postForm);
-		model.setViewName("redirect:/postlist/");
+		model.setViewName("redirect:/postlist");
 		return model;
 	}
 
@@ -361,19 +365,14 @@ public class PostController {
 	 * 
 	 * @param${model, request}
 	 */
-	private ModelAndView redirectErrorView(Post post) {
+	private ModelAndView redirectErrorView(PostCreateForm postCreateForm, Post post) {
 		ModelAndView model = new ModelAndView();
 		model.addObject("errorMsg", messageSource.getMessage("MSG_0002", null, null));
+		model.addObject("postForm", postCreateForm);
 		if (post.getId() == 0) {
-			model.setViewName("redirect:/postlist/createpost");
-			model.addObject("postTitle", post.getTitle());
-			model.addObject("postDescription", post.getDescription());
-			model.addObject("postStatus", post.getStatus());
+			model.setViewName("createpost");
 		} else {
 			model.setViewName("redirect:/postlist/editPost?id=" + post.getId());
-			model.addObject("postTitle", post.getTitle());
-			model.addObject("postDescription", post.getDescription());
-			model.addObject("postStatus", post.getStatus());
 		}
 		return model;
 	}
@@ -427,7 +426,8 @@ public class PostController {
 	@RequestMapping(value = "postlist/download")
 	public HttpEntity<byte[]> download(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		SpreadsheetInfo.setLicense("FREE-LIMITED-KEY");
-		List<Post> postList = postService.getAllPosts();
+		checkAuthorizedUser(request, (User) request.getSession().getAttribute("LOGIN_USER"));
+		List<Post> postList = postService.getAllPosts(loginUserId, userRole);
 		byte[] bytes = downloadService.generateDownload(postList);
 		HttpHeaders header = new HttpHeaders();
 		header.set(HttpHeaders.CONTENT_TYPE, SaveOptions.getCsvDefault().getContentType());

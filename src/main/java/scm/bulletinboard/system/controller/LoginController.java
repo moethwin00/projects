@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.math3.distribution.LogNormalDistribution;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -85,6 +86,7 @@ public class LoginController {
 			if (BCrypt.checkpw(password, user.getPassword())) {
 				session.setAttribute("LOGIN_USER", user);
 				session.setAttribute("loginUserId", user.getId());
+				session.setAttribute("USER_ROLE", user.getType()+"");
 				session.setAttribute("loginUserName", user.getName());
 				ModelAndView model = new ModelAndView();
 				model.addObject("postSearch", new PostForm());
@@ -114,12 +116,14 @@ public class LoginController {
 	@RequestMapping(value = "logout", method = RequestMethod.GET)
 	public ModelAndView logout(Model model, HttpSession session, HttpServletRequest req, HttpServletResponse resp)
 	        throws IOException, ServletException {
-		
-		session.removeAttribute("LOGIN_USER");
-		session.removeAttribute("loginUserId");
-		session.removeAttribute("loginUserName");
-		session.invalidate();
-		ModelAndView loginView = new ModelAndView("redirect:/login");
+		req.getSession().removeAttribute("LOGIN_USER");
+		req.getSession().removeAttribute("loginUserId");
+		req.getSession().removeAttribute("loginUserName");
+		req.getSession().removeAttribute("USER_ROLE");
+		System.out.println(req.getSession().getAttribute("LOGIN_USER"));
+		req.getSession().invalidate();
+		ModelAndView loginView = new ModelAndView();
+		loginView.setViewName("redirect:postlist");
 		return loginView;
 	}
 }

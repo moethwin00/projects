@@ -5,31 +5,33 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <jsp:include page="layout/header.jsp"></jsp:include>
 <jsp:include page="layout/menu.jsp"></jsp:include>
-<form:form method="post" action="postlist/searchPosts" commandName="postSearch"
-	id="movePage">
+<form:form method="post" action="${pageContext.request.contextPath}/postlist/searchPosts"
+	commandName="postSearch" id="movePage">
 	<div class="container">
 		<h5 class="h5 mb-3">Post List</h5>
 		<div class="container">
-
-			<div class="row">
-				<div class="col-md-4 mb-1 col-sm-12 col-12">
-					<form:input type="text" class="form-control" id="search-text"
-						path="title" value="${title}"/>
+			<c:if test="${LOGIN_USER != null}">
+				<div class="row">
+					<div class="col-md-4 mb-1 col-sm-12 col-12">
+						<form:input type="text" class="form-control" id="search-text"
+							path="title" value="${title}" />
+					</div>
+					<div class="col-md-2 mb-1 col-sm-3 col-12">
+						<input type="submit" value="Search"
+							class="btn btn-primary btn-post-list">
+					</div>
+					<div class="col-md-2 mb-1 col-sm-3 col-4">
+						<a href="${pageContext.request.contextPath}/postlist/createpost"
+							class="btn btn-primary btn-post-list">Add</a>
+					</div>
+					<div class="col-md-2 mb-1 col-sm-3 col-4">
+						<a href="${pageContext.request.contextPath}/postlist/uploadcsv" class="btn btn-primary btn-post-list">Upload</a>
+					</div>
+					<div class="col-md-2 mb-1 col-sm-3 col-4">
+						<a href="${pageContext.request.contextPath}/postlist/download" class="btn btn-primary btn-post-list">Download</a>
+					</div>
 				</div>
-				<div class="col-md-2 mb-1 col-sm-3 col-12">
-					<input type="submit" value="Search"
-						class="btn btn-primary btn-post-list">
-				</div>
-				<div class="col-md-2 mb-1 col-sm-3 col-4">
-					<a href="postlist/createpost" class="btn btn-primary btn-post-list">Add</a>
-				</div>
-				<div class="col-md-2 mb-1 col-sm-3 col-4">
-					<a href="postlist/uploadcsv" class="btn btn-primary btn-post-list">Upload</a>
-				</div>
-				<div class="col-md-2 mb-1 col-sm-3 col-4">
-					<a href="postlist/download" class="btn btn-primary btn-post-list">Download</a>
-				</div>
-			</div>
+			</c:if>
 			<table class="table table-bordered">
 				<thead>
 					<tr>
@@ -37,8 +39,10 @@
 						<th>Post Description</th>
 						<th>Posted User</th>
 						<th>Posted Date</th>
-						<th></th>
-						<th></th>
+						<c:if test="${LOGIN_USER != null}">
+							<th></th>
+							<th></th>
+						</c:if>
 					</tr>
 				</thead>
 				<tbody>
@@ -49,9 +53,11 @@
 							<td>${post.description}</td>
 							<td>${post.user.name}</td>
 							<td>${post.createdAt}</td>
-							<td><a href="postlist/editPost?id=${post.id}">Edit</a></td>
-							<td><a href="#" data-toggle="modal"
-								data-target="#confirmModal${post.id}">Delete</a></td>
+							<c:if test="${LOGIN_USER != null}">
+								<td><a href="postlist/editPost?id=${post.id}">Edit</a></td>
+								<td><a href="#" data-toggle="modal"
+									data-target="#confirmModal${post.id}">Delete</a></td>
+							</c:if>
 						</tr>
 					</c:forEach>
 				</tbody>
@@ -75,7 +81,7 @@
 							</div>
 							<div class="modal-footer bg-danger">
 								<button type="button" class="btn btn-primary"
-									onclick="postlist/deletePost(${post.id})">Yes</button>
+									onclick="deletePost(${post.id})">Yes</button>
 								<button type="button" class="btn btn-secondary"
 									data-dismiss="modal">No</button>
 							</div>
@@ -117,19 +123,21 @@
 					</div>
 				</div>
 			</c:forEach>
-			<p id="pagination-count" style="display:none">${paginationCount+1}</p>
+			<p id="pagination-count" style="display: none">${paginationCount+1}</p>
 			<div
 				class="container text-center <c:if test="${postCount <= 7}">close-pagination</c:if>">
 				<div aria-label="Page navigation example"
 					class="container-pagination">
 					<ul class="pagination" id="post-pagination">
 						<c:if test="${postCount > 7}">
-							<li class="page-item disabled" id="prev"><a class="page-link"
-								href="javascript:previousId();" aria-label="Previous"> <span
-									aria-hidden="true">&laquo;</span> <span class="sr-only">Previous</span>
+							<li class="page-item disabled" id="prev"><a
+								class="page-link" href="javascript:previousId();"
+								aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+									<span class="sr-only">Previous</span>
 							</a></li>
 							<c:forEach var="i" begin="1" end="${paginationCount}">
-								<li class="page-item" id="page-item${i}"><a class="page-link" href="postlist?page=${i}">${i}</a></li>
+								<li class="page-item" id="page-item${i}"><a
+									class="page-link" href="postlist?page=${i}">${i}</a></li>
 							</c:forEach>
 						</c:if>
 						<li class="page-item" id="next"><a class="page-link"
