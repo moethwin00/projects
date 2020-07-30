@@ -188,7 +188,7 @@ public class PostCreateForm {
 	/**
 	 * <h2>${updatedUserId}</h2>
 	 * <p>
-	 * ${SetterMethod For Updated User Id}
+	 * ${Setter Method For Updated User Id}
 	 * </p>
 	 * 
 	 * @param ${updatedUserId}
@@ -197,34 +197,98 @@ public class PostCreateForm {
 		this.updatedUserId = updatedUserId;
 	}
 
+	/**
+	 * <h2>${deletedUserId}</h2>
+	 * <p>
+	 * ${Getter Method For Updated User Id}
+	 * </p>
+	 * 
+	 * @return ${Integer}
+	 */
 	public Integer getDeletedUserId() {
 		return deletedUserId;
 	}
 
+	/**
+	 * <h2>${deletedUserId}</h2>
+	 * <p>
+	 * ${Setter Method For Deleted User Id}
+	 * </p>
+	 * 
+	 * @param ${deletedUserId}
+	 */
 	public void setDeletedUserId(Integer deletedUserId) {
 		this.deletedUserId = deletedUserId;
 	}
 
+	/**
+	 * <h2>${createdAt}</h2>
+	 * <p>
+	 * ${Getter Method For Created At}
+	 * </p>
+	 * 
+	 * @return ${Date}
+	 */
 	public Date getCreatedAt() {
 		return createdAt;
 	}
 
+	/**
+	 * <h2>${createdAt}</h2>
+	 * <p>
+	 * ${Setter Method For Created At}
+	 * </p>
+	 * 
+	 * @param ${createdAt}
+	 */
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
 
+	/**
+	 * <h2>${updatedAt}</h2>
+	 * <p>
+	 * ${Setter Method For Updated At}
+	 * </p>
+	 * 
+	 * @return ${Date}
+	 */
 	public Date getUpdatedAt() {
 		return updatedAt;
 	}
 
+	/**
+	 * <h2>${updatedAt}</h2>
+	 * <p>
+	 * ${SetterMethod For Updated At}
+	 * </p>
+	 * 
+	 * @param ${upadatedAt}
+	 */
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
 	}
 
+	/**
+	 * <h2>${deletedAt}</h2>
+	 * <p>
+	 * ${Getter Method For Deleted At}
+	 * </p>
+	 * 
+	 * @return ${Date}
+	 */
 	public Date getDeletedAt() {
 		return deletedAt;
 	}
 
+	/**
+	 * <h2>${deletedAt}</h2>
+	 * <p>
+	 * ${SetterMethod For Deleted At}
+	 * </p>
+	 * 
+	 * @param ${deletedAt}
+	 */
 	public void setDeletedAt(Date deletedAt) {
 		this.deletedAt = deletedAt;
 	}

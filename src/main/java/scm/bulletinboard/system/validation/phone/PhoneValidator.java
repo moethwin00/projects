@@ -3,12 +3,24 @@ package scm.bulletinboard.system.validation.phone;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+/**
+ * PhoneValidator For Phone Number Format Checking
+ */
 public class PhoneValidator implements ConstraintValidator<Phone, String> {
 	
 	public void initialize(Phone paramA) {
 		
 	}
 
+	/**
+	 * <h2>${Checking Phone Format Valid or Not}</h2>
+	 * <p>
+	 * Checking Phone Format Validation 
+	 * </p>
+	 * 
+	 * @param ${phoneNo, context}
+	 * @return ${boolean}
+	 */
 	public boolean isValid(String phoneNo, ConstraintValidatorContext context) {
 		if(phoneNo == null) {
 			return false;

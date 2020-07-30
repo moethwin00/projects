@@ -69,7 +69,6 @@ public class PasswordController {
 	        BindingResult result, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		User user = userService.getUserById(passwordForm.getId());
 		String password = user.getPassword();
-		System.out.println(passwordForm.getOldPassword());
 		if (result.hasErrors() || !passwordForm.getNewPassword().equals(passwordForm.getConfirmNewPassword()) || !BCrypt.checkpw(passwordForm.getOldPassword(), password)) {
 			ModelAndView model = new ModelAndView();
 			if(!passwordForm.getNewPassword().equals(passwordForm.getConfirmNewPassword())) {

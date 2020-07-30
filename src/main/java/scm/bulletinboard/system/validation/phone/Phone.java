@@ -8,6 +8,12 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
+/**
+ * <h2>Interface for ${PhoneValidator}</h2>
+ * <p>
+ * Interface for ${PhoneValidator}
+ * </p>
+ */
 @Documented
 @Constraint(validatedBy = PhoneValidator.class)
 @Target( { ElementType.METHOD, ElementType.FIELD })

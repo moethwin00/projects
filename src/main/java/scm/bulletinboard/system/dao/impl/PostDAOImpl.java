@@ -183,24 +183,6 @@ public class PostDAOImpl implements PostDAO {
 	}
 
 	/**
-	 * <h2>${Post Title Duplicate or Not}</h2>
-	 * <p>
-	 * Post Title Duplicate or Not
-	 * </p>
-	 * 
-	 * @return ${Object}
-	 */
-	@Override
-	public Post isDuplicateTitleExist(String title) {
-		String postHqlQuery = "SELECT p FROM Post p where p.title = :title";
-		Query queryPostByTitle = sessionFactory.getCurrentSession().createQuery(postHqlQuery);
-		queryPostByTitle.setParameter("title", title);
-		Post resultPost = (Post) queryPostByTitle.uniqueResult();
-
-		return resultPost;
-	}
-
-	/**
 	 * <h2>${Save Post Data with Upload File}</h2>
 	 * <p>
 	 * Save Post Data with Upload File

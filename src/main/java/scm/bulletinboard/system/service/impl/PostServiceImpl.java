@@ -194,7 +194,6 @@ public class PostServiceImpl implements PostService {
 				post.setStatus(0);
 			}
 			if (postCreateForm.isActive()) {
-				System.out.println(postCreateForm.isActive());
 				post.setStatus(1);
 			}
 			post.setUpdatedAt(date);
@@ -259,11 +258,11 @@ public class PostServiceImpl implements PostService {
 		String line = reader.readLine();
 		while (line != null) {
 			Post post = new Post();
-			Date currentDate = new Date();
+			Date currentDate = userService.getDateData();
 			attributes = line.split(",");
 			if (attributes != null) {
 				if (attributes.length == 3) {
-					Post resultPostByTitle = this.postDAO.isDuplicateTitleExist(attributes[0]);
+					Post resultPostByTitle = this.postDAO.getPostsByTitle(attributes[0]);
 					if (!attributes[0].equals("") && !attributes[0].equals(null) && !attributes[0].isEmpty()
 					        && resultPostByTitle == null && attributes[2].length() == 1) {
 						post.setTitle(attributes[0]);
@@ -275,7 +274,6 @@ public class PostServiceImpl implements PostService {
 						post.setCreatedAt(currentDate);
 						post.setUpdatedAt(currentDate);
 						postList.add(post);
-						System.out.println(post);
 					} else {
 						if (resultPostByTitle != null) {
 							uploadErrors.remove(0);

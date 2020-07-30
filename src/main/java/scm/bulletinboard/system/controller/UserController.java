@@ -74,7 +74,7 @@ public class UserController {
 		}
 		userCount = userService.getUserCount();
 		int paginationCount = userCount / 7;
-		if (paginationCount != 0) {
+		if (paginationCount != 0 && (userCount % 7) != 0) {
 			++paginationCount;
 		}
 		model.addObject("userLists", userList);
@@ -94,9 +94,6 @@ public class UserController {
 	@RequestMapping(value = "userlist/searchUsers", method = { RequestMethod.POST })
 	public ModelAndView searchUsers(@ModelAttribute("uerSearch") UserForm userForm, HttpSession session)
 	        throws ParseException {
-		if (session.getAttribute("LOGIN_USER") == null) {
-			return new ModelAndView("redirect:/login");
-		}
 		ModelAndView searchUserView = new ModelAndView("userlist");
 		doSearchUserProcess(searchUserView, INITIAL_OFFSET01, true, userForm);
 
@@ -124,15 +121,10 @@ public class UserController {
 		        .size();
 		List<User> userList = this.userService.getUsersBySearchkeys(searchName, searchEmail, searchCreatedFrom,
 		        searchCreatedTo);
-		System.out.println(userList);
 		if (resultSearch == false && userList.size() == 0) {
 			view.addObject("alertMsg", "There is no search result.");
 		}
-		view.addObject("userSearch", new UserForm());
-		view.addObject("searchName", searchName);
-		view.addObject("searchEmail", searchEmail);
-		view.addObject("searchCreatedFrom", searchCreatedFrom);
-		view.addObject("searchCreatedTo", searchCreatedTo);
+		view.addObject("userSearch", userForm);
 		view.addObject("offset", offset);
 		view.addObject("userLists", userList);
 		view.addObject("userCount", count);
@@ -318,6 +310,3 @@ public class UserController {
 		return model;
 	}
 }
-
-
-//	

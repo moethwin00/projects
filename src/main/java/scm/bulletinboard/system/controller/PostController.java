@@ -15,17 +15,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-
 import com.gembox.spreadsheet.SaveOptions;
 import com.gembox.spreadsheet.SpreadsheetInfo;
 import com.google.common.io.Files;
-
 import scm.bulletinboard.system.form.post.PostCreateForm;
 import scm.bulletinboard.system.form.post.PostForm;
 import scm.bulletinboard.system.model.Post;
@@ -353,7 +350,6 @@ public class PostController {
 		PostForm postForm = new PostForm();
 		model.addObject("postSearch", postForm);
 		String referer = request.getHeader("Referer");
-		System.out.println(referer);
 		model.setViewName("redirect:" + referer);
 	}
 
@@ -409,7 +405,7 @@ public class PostController {
 				uploadView = new ModelAndView("uploadcsv");
 				uploadView.addObject("uploadErrorMsg", uploadErrors);
 			} else {
-				uploadView = new ModelAndView("redirect:/postlist/");
+				uploadView = new ModelAndView("redirect:/postlist");
 			}
 			return uploadView;
 		}

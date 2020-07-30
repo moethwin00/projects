@@ -14,19 +14,19 @@
 			<div class="row">
 				<div class="col-md-2 mb-1 col-sm-6">
 					<form:input type="text" class="form-control" path="name"
-						value="${searchName}" />
+						value="${userSearch.name}" />
 				</div>
 				<div class="col-md-2 mb-1 col-sm-6">
 					<form:input type="text" class="form-control" path="email"
-						value="${searchEmail}" />
+						value="${userSearch.email}" />
 				</div>
 				<div class="col-md-2 mb-1 col-sm-6">
 					<form:input type="date" class="form-control" path="createdFrom"
-						value="${searchCreatedFrom}" />
+						value="${userSearch.createdFrom}" />
 				</div>
 				<div class="col-md-2 mb-1 col-sm-6">
 					<form:input type="date" class="form-control" path="createdTo"
-						value="${searchCreatedTo}" />
+						value="${userSearch.createdTo}" />
 				</div>
 				<div class="col-md-2 mb-1 col-sm-6">
 					<input type="submit" value="Search"

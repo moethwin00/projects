@@ -2,14 +2,10 @@ package scm.bulletinboard.system.controller;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Date;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.apache.commons.math3.distribution.LogNormalDistribution;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -21,9 +17,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.sun.java.swing.plaf.windows.resources.windows;
-
 import scm.bulletinboard.system.form.login.LoginForm;
 import scm.bulletinboard.system.form.post.PostForm;
 import scm.bulletinboard.system.model.User;
@@ -99,7 +92,6 @@ public class LoginController {
 				return model;
 			}
 		} else {
-			System.out.println("Email or Password is incorrect");
 			ModelAndView model = new ModelAndView();
 			model.setViewName("login");
 			model.addObject("errorMsg", messageSource.getMessage("MSG_0001", null, null));
@@ -120,7 +112,6 @@ public class LoginController {
 		req.getSession().removeAttribute("loginUserId");
 		req.getSession().removeAttribute("loginUserName");
 		req.getSession().removeAttribute("USER_ROLE");
-		System.out.println(req.getSession().getAttribute("LOGIN_USER"));
 		req.getSession().invalidate();
 		ModelAndView loginView = new ModelAndView();
 		loginView.setViewName("redirect:postlist");

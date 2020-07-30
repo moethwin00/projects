@@ -12,10 +12,5 @@ import scm.bulletinboard.system.model.Post;
  * </p>
  */
 public interface DownloadService {
-//	public void downloadExcel(List<Post> postList) throws IOException;
-//
-//	public String generateDownload(List<Post> postList, ByteArrayOutputStream baos, String filename,
-//	        HashMap<String, Object> parameter, String path) throws JRException;
-
 	public byte[] generateDownload(List<Post> postList) throws IOException;
 }

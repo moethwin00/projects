@@ -1,7 +1,7 @@
 <footer class="page-footer font-small">
 	<!-- Copyright -->
 	<div class="footer-copyright bg-light text-center py-3 mt-3" style="position: relative; bottom: 0; width: 100%;">
-		© 2020 Copyright: <a href="#"> Seattle Consulting Myanmar</a>
+		© 2020 Copyright: <a href="http://seattleconsultingmyanmar.com/"> Seattle Consulting Myanmar</a>
 	</div>
 	<!-- Copyright -->
 </footer>

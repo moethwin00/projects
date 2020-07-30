@@ -46,7 +46,6 @@ public class UserServiceImpl implements UserService {
 	public boolean isUserExist(String email) {
 		boolean userExist = false;
 		User user = userDAO.getUserByEmail(email);
-		System.out.println(user);
 		if (user != null) {
 			userExist = true;
 		}
@@ -169,7 +168,6 @@ public class UserServiceImpl implements UserService {
 
 				byte[] data = Base64.decodeBase64(realData);
 				File imgFile = new File(userProfilePath, userForm.getEmail() + "profile.jpg");
-				System.out.println(imgFile.getAbsolutePath());
 				if (imgFile.exists()) {
 					if (imgFile.delete()) {
 						System.out.print("YES");
@@ -180,7 +178,6 @@ public class UserServiceImpl implements UserService {
 				}
 				try (FileOutputStream stream = new FileOutputStream(imgFile)) {
 					stream.write(data);
-					System.out.println(data + "*****");
 				}
 				userForm.setProfile("resources/profiles/" + userForm.getEmail() + "profile.jpg");
 			}
@@ -204,7 +201,6 @@ public class UserServiceImpl implements UserService {
 		String name = userForm.getName();
 		String email = userForm.getEmail();
 		String password = userForm.getPassword();
-		System.out.println(password + "*****");
 		String profile = userForm.getProfile();
 		int type = userForm.getType();
 		String phone = userForm.getPhone();
@@ -254,7 +250,6 @@ public class UserServiceImpl implements UserService {
 	public User addNewUser(UserCreateForm userCreateForm, Integer loginUserId, Date date) throws ParseException {
 		User user = new User();
 		if (userCreateForm.getId() != null) {
-			System.out.println(userCreateForm.getId());
 			User oldUser = this.getUserById(userCreateForm.getId());
 			user.setId(userCreateForm.getId());
 			user.setCreatedAt(oldUser.getCreatedAt());

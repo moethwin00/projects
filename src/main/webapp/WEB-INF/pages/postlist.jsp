@@ -123,7 +123,7 @@
 					</div>
 				</div>
 			</c:forEach>
-			<p id="pagination-count" style="display: none">${paginationCount+1}</p>
+			<p id="pagination-count" style="display: none">${paginationCount +1}</p>
 			<div
 				class="container text-center <c:if test="${postCount <= 7}">close-pagination</c:if>">
 				<div aria-label="Page navigation example"
