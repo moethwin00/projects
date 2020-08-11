@@ -5,24 +5,25 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
 /**
- * <h2>Interface for ${PhoneValidator}</h2>
+ * <h2>Interface for PhoneValidator</h2>
  * <p>
- * Interface for ${PhoneValidator}
+ * Interface for PhoneValidator
  * </p>
  */
 @Documented
 @Constraint(validatedBy = PhoneValidator.class)
-@Target( { ElementType.METHOD, ElementType.FIELD })
+@Target({ ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Phone {
-	
-	String message() default "*Invalid phone number";
-	
-	Class<?>[] groups() default {};
-	
-	 Class<? extends Payload>[] payload() default {};
+
+    String message() default "*Invalid phone number";
+
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
 }

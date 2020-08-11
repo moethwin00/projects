@@ -10,9 +10,9 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 /**
- * <h2>Interface for ${PasswordValidator}</h2>
+ * <h2>Interface for PasswordValidator</h2>
  * <p>
- * Interface for ${PasswordValidator}
+ * Interface for PasswordValidator
  * </p>
  */
 @Documented
@@ -20,10 +20,10 @@ import javax.validation.Payload;
 @Target({ ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Password {
-	String message() default "*Password must be more than 8 characters long, must contain at least 1 Uppercase and 1 Numeric.";
+    String message() default "*Password must be more than 8 characters long, must contain at least 1 Uppercase and 1 Numeric.";
 
-	Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-	Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 
 }

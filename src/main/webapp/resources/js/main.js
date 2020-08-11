@@ -5,7 +5,7 @@ var pageId = 0;
 var routeParam = [route];
 $(document).ready(function(){
 	if (route.includes("?")) {
-		routeParam = route.toString().split("?");
+	    routeParam = route.toString().split("?");
 		if (routeParam[0] == "userlist" || routeParam[0] == "postlist") {
 			pageTag = routeParam[1];
 			var pageTag = pageTag.split("=");
